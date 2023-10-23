@@ -1,2 +1,2 @@
 @echo off
-START ./../UnrealEngine/Engine/Binaries/Win64/UnrealEditor.exe %~dp0PotatoPlanterGathererEater.uproject ?listen -server -log
+START ./../UnrealEngine/Engine/Binaries/Win64/UnrealEditor.exe %~dp0PotatoGame.uproject ?listen -server -log

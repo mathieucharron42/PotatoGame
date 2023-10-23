@@ -1,2 +1,2 @@
 @echo off
-START ./Packaged/WindowsServer/PotatoPlanterGathererEaterServer.exe ?listen -log
+START ./Packaged/WindowsServer/PotatoGameServer.exe ?listen -log
