@@ -1,7 +1,7 @@
-# Potato Planter Gatherer Eater Game
+# Potato Game
 A staging on the potato industry in 19th century Europe.
 
-Developed with Unreal Engine 4.27.1 and 5.0.3.
+Developed with Unreal Engine 4.27.1, 5.0.3 and 5.3.1
 
 ## How to Setup and Run The Game
 ### Networked Execution Modes
