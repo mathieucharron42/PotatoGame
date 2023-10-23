@@ -23,7 +23,7 @@ void UPotatoCharacterWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 	FString role;
 	TArray<FString> instructions;
 	FColor color;
-	if (ensure(IsValid(_player)))
+	if (IsValid(_player))
 	{
 		APotatoPlayerState* playerState = _player->GetPlayerState<APotatoPlayerState>();
 		if (IsValid(playerState))
