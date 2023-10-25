@@ -1,6 +1,6 @@
 # Exercice1 : Les bases
 
-Sélectionner branche 'exercice2' comme point de départ.
+Sélectionner branche 'exercice1' comme point de départ.
 
 Comparer avec branche 'master' pour la version complétée.
 
