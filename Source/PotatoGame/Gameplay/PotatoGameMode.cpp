@@ -1,8 +1,5 @@
 #include "PotatoGameMode.h"
 
-#include "PotatoGame/Characters/PotatoEaterCharacter.h"
-#include "PotatoGame/Characters/PotatoEatingComponent.h"
-#include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Gameplay/PotatoGameRole.h"
 #include "PotatoGame/Gameplay/PotatoGameState.h"
 #include "PotatoGame/Gameplay/PotatoPlayerController.h"
@@ -32,7 +29,7 @@ void APotatoGameMode::RestartPlayer(AController* NewPlayer)
 
 void APotatoGameMode::CheckGameEnded()
 {
-	UWorld* world = GetWorld();
+	/*UWorld* world = GetWorld();
 	if (ensure(IsValid(world)))
 	{
 		TArray<UPotatoEatingComponent*> eatingComponents;
@@ -62,7 +59,7 @@ void APotatoGameMode::CheckGameEnded()
 				gameState->SetGameEnded(true);
 			}
 		}
-	}
+	}*/
 }
 
 APotatoBaseCharacter* APotatoGameMode::FindSuitableCharacter(const TSubclassOf<APotatoBaseCharacter>& type)
@@ -185,28 +182,4 @@ void APotatoGameMode::QuitGame(APotatoPlayerController* playerController)
 #endif
 		}
 	}
-}
-
-APotato* APotatoGameMode::SpawnPotato(const FTransform& transform, const FVector& velocity)
-{
-	APotato* newPotato = nullptr;
-
-	UWorld* world = GetWorld();
-	if (ensure(IsValid(world)))
-	{
-		APotatoGameMode* potatoGameMode = world->GetAuthGameMode<APotatoGameMode>();
-		if (ensure(IsValid(potatoGameMode)))
-		{
-			if(ensure(_potatoTypes.Num() > 0))
-			{
-				const TSubclassOf<APotato>& potatoType = _potatoTypes[FMath::RandRange(0, _potatoTypes.Num() - 1)];
-
-				newPotato = world->SpawnActor<APotato>(potatoType, transform);
-				UPrimitiveComponent* potatoPrimitiveComponent = Cast<UPrimitiveComponent>(newPotato->GetRootComponent());
-				potatoPrimitiveComponent->SetPhysicsLinearVelocity(velocity);
-			}
-		}
-	}
-
-	return newPotato;
 }

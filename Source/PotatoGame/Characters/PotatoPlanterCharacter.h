@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
-#include "PotatoGame/Crops/Potato.h"
 
 #include "CoreMinimal.h"
 
@@ -19,9 +18,5 @@ public:
 	APotatoPlanterCharacter();
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UPotatoPlantingComponent* _potatoPlantingComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UPotatoPickUpComponent* _potatoPickUpComponent = nullptr;
 };
