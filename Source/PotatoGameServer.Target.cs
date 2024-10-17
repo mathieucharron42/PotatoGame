@@ -9,6 +9,7 @@ public class PotatoGameServerTarget : TargetRules
 	{
 		Type = TargetType.Server;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
+		bOverrideBuildEnvironment = true;
 		ExtraModuleNames.Add("PotatoGame");
 	}
 }
