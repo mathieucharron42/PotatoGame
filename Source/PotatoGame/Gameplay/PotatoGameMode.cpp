@@ -6,6 +6,7 @@
 #include "PotatoGame/Gameplay/PotatoGameRole.h"
 #include "PotatoGame/Gameplay/PotatoGameState.h"
 #include "PotatoGame/Gameplay/PotatoPlayerController.h"
+#include "PotatoGame/Gameplay/PotatoAIController.h"
 #include "PotatoGame/Gameplay/PotatoPlayerState.h"
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
@@ -16,6 +17,21 @@
 #include "EngineUtils.h"
 #include "GameFramework/GameSession.h"
 #include "Kismet/GameplayStatics.h"
+
+bool APotatoGameMode::IsPossessed(const ACharacter* character)
+{
+	return IsPossessedByPlayer(character) || IsPossessedByAI(character);
+}
+
+bool APotatoGameMode::IsPossessedByPlayer(const ACharacter* character)
+{
+	return IsValid(character->GetController<APotatoPlayerController>());
+}
+
+bool APotatoGameMode::IsPossessedByAI(const ACharacter* character)
+{
+	return IsValid(character->GetController<APotatoAIController>());
+}
 
 void APotatoGameMode::RestartPlayer(AController* NewPlayer)
 {
@@ -91,11 +107,9 @@ bool APotatoGameMode::IsSuitableCharacter(const TSubclassOf<APotatoBaseCharacter
 	bool suitable = false;
 	if (ensure(IsValid(character)))
 	{
-		if (character->IsA(type))
+		if (character->IsA(type) && !IsPossessedByPlayer(character))
 		{
-			const APotatoPlayerController* possessingController = character->GetController<APotatoPlayerController>();
-			const bool isCharacterPossessed = IsValid(possessingController);
-			suitable = !isCharacterPossessed;
+			suitable = true;
 		}
 	}
 	PotatoUtilities::DoSomething(1.1f);
@@ -105,13 +119,60 @@ bool APotatoGameMode::IsSuitableCharacter(const TSubclassOf<APotatoBaseCharacter
 FPotatoGameRole APotatoGameMode::GetNextRole(FPotatoGameRole current)
 {
 	FPotatoGameRole nextRole;
-	if (ensure(_roles.Num() > 0))
+	if (ensure(_supportedRoles.Num() > 0))
 	{
-		const int32 currentIndex = _roles.Find(current);
-		const int32 nextIndex = (currentIndex + 1) % +_roles.Num();
-		nextRole = _roles[nextIndex];
+		const int32 currentIndex = _supportedRoles.Find(current);
+		const int32 nextIndex = (currentIndex + 1) % +_supportedRoles.Num();
+		nextRole = _supportedRoles[nextIndex];
 	}
 	return nextRole;
+}
+
+TOptional<FPotatoGameRole> APotatoGameMode::GetRoleFromCharacterType(APotatoBaseCharacter* character) const
+{
+	TOptional<FPotatoGameRole> role;
+
+	for (const FPotatoGameRole& gameRole : _supportedRoles)
+	{
+		if (character->IsA(gameRole.GetCharacterType()))
+		{
+			role = gameRole;
+			break;
+		}
+	}
+	
+	return role;
+}
+
+void APotatoGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SpawnAIControllers();
+}
+
+void APotatoGameMode::SpawnAIControllers()
+{
+	UWorld* world = GetWorld();
+	if (ensure(IsValid(world)))
+	{
+		for (TActorIterator<APotatoBaseCharacter> it(world); it; ++it)
+		{
+			APotatoBaseCharacter* character = *it;
+			if (!IsPossessed(character))
+			{
+				TOptional<FPotatoGameRole> roleType = GetRoleFromCharacterType(character);
+				if (roleType && _aiRoles.Contains(roleType->GetRoleType()))
+				{
+					if (ensure(IsValid(_aiControllerClass)))
+					{
+						APotatoAIController* aiController = world->SpawnActor<APotatoAIController>(_aiControllerClass);
+						aiController->Possess(character);
+					}
+				}
+			}
+		}
+	}
 }
 
 void APotatoGameMode::Tick(float dt)
@@ -131,7 +192,7 @@ bool APotatoGameMode::ChangeRole(APotatoPlayerController* playerController)
 	APotatoPlayerState* playerState = playerController->GetPlayerState<APotatoPlayerState>();
 	FPotatoGameRole initialRole = playerState->GetCurrentRole();
 
-	for (FPotatoGameRole role = GetNextRole(initialRole); initialRole != role; role = GetNextRole(role))
+	for (FPotatoGameRole role = GetNextRole(initialRole); initialRole != role && !found; role = GetNextRole(role))
 	{
 		TRACE_CPUPROFILER_EVENT_SCOPE(TEXT("APotatoGameMode::ChangeRole Loop"))
 
@@ -141,7 +202,6 @@ bool APotatoGameMode::ChangeRole(APotatoPlayerController* playerController)
 			playerController->Possess(character);
 			playerState->SetCurrentRole(role);
 			found = true;
-			break;
 		}
 	}
 

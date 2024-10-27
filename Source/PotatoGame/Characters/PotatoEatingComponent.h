@@ -20,13 +20,11 @@ public:
 	DECLARE_MULTICAST_DELEGATE(FCaloriesEatenChanged);
 	FCaloriesEatenChanged OnCaloriesEatenChanged;
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_EatHeldPotato();
 
 	UFUNCTION(Server, Reliable)
 	void Server_EatPotato(APotato* potato);
-
-	void Authority_EatPotato(APotato* potato);
 
 	bool IsHungry() const;
 
@@ -34,12 +32,15 @@ public:
 
 	float GetCaloriesEaten() const;
 
-protected:
+private:
+	virtual void BeginPlay() override;
+	void Authority_EatHeldPotato();
+	void Authority_EatPotato(APotato* potato);
+
 	virtual void InitializeComponent() override;
 
 	virtual void UninitializeComponent() override;
 
-private:
 	void OnSetupPlayerInput(UInputComponent* inputComponent);
 
 	void SetCaloriesEaten(float calories);

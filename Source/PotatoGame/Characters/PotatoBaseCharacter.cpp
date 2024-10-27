@@ -2,6 +2,8 @@
 
 #include "PotatoBaseCharacter.h"
 
+#include "PotatoGame/Gameplay/GameplayTagComponent.h"
+
 //#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -40,6 +42,8 @@ APotatoBaseCharacter::APotatoBaseCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	GameplayTag = CreateDefaultSubobject<UGameplayTagComponent>(TEXT("GameplayTag"));
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -118,4 +122,9 @@ void APotatoBaseCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void APotatoBaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	GameplayTag->GetOwnedGameplayTags(TagContainer);
 }

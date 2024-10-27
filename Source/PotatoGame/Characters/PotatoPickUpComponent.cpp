@@ -1,17 +1,35 @@
 #include "PotatoPickUpComponent.h"
 
+#include "PotatoGame/PotatoGame.h"
 #include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
+#include "PotatoGame/Gameplay/GameplayTagComponent.h"
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
-#include "Net/UnrealNetwork.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "GameplayTagContainer.h"
 #include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 UPotatoPickUpComponent::UPotatoPickUpComponent()
 {
 	bWantsInitializeComponent = true;
 	SetIsReplicatedByDefault(true);
+}
+
+void UPotatoPickUpComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AActor* owner = Cast<AActor>(GetOwner());
+	if (ensure(IsValid(owner)))
+	{
+		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
+		if (ensure(IsValid(tagsComponent)))
+		{
+			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoPickupCapabale);
+		}
+	}
 }
 
 void UPotatoPickUpComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -137,7 +155,7 @@ bool UPotatoPickUpComponent::IsHoldingPotato(APotato* potato) const
 	return IsHoldingPotato() && _heldPotato == potato;
 }
 
-void UPotatoPickUpComponent::OnRep_HeldPotato(APotato* old)
+void UPotatoPickUpComponent::OnReplicate_HeldPotato(APotato* old)
 {
 	OnUpdate_HeldPotato(old);
 }

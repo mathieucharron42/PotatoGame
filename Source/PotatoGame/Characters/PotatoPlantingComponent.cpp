@@ -1,9 +1,13 @@
 #include "PotatoPlantingComponent.h"
 
+#include "PotatoGame/PotatoGame.h"
 #include "PotatoGame/Crops/Potato.h"
+#include "PotatoGame/Gameplay/GameplayTagComponent.h"
 #include "PotatoGame/Gameplay/PotatoGameMode.h"
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
+#include "GameplayTagAssetInterface.h"
+#include "GameplayTagContainer.h"
 #include "Kismet/KismetMathLibrary.h"
 
 static TAutoConsoleVariable<float> CVarPotatoAutoPlantRate (
@@ -18,6 +22,21 @@ UPotatoPlantingComponent::UPotatoPlantingComponent()
 	bWantsInitializeComponent = true;
 	PrimaryComponentTick.bCanEverTick = true;
 	SetIsReplicatedByDefault(true);
+}
+
+void UPotatoPlantingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	AActor* owner = Cast<AActor>(GetOwner());
+	if (ensure(IsValid(owner)))
+	{
+		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
+		if (ensure(IsValid(tagsComponent)))
+		{
+			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoPlantingCapabale);
+		}
+	}
 }
 
 void UPotatoPlantingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

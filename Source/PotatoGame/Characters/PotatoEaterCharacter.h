@@ -18,20 +18,18 @@ class POTATOGAME_API APotatoEaterCharacter : public APotatoBaseCharacter
 public:
 	APotatoEaterCharacter();
 
-protected:
-	virtual void BeginPlay() override;
-
-	virtual void EndPlay(EEndPlayReason::Type reason) override;
-	
 private:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(EEndPlayReason::Type reason) override;
+
 	void OnCaloriesEatenChanged();
 
 	void Authority_SetScale(float scale);
 	UFUNCTION()
-	void OnRep_CurrentScale(float oldScale);
+	void OnReplicate_CurrentScale(float oldScale);
 	void OnUpdate_CurrentScale(float oldScale);
 
-	UPROPERTY(Transient, Replicated, ReplicatedUsing=OnRep_CurrentScale)
+	UPROPERTY(Transient, Replicated, ReplicatedUsing=OnReplicate_CurrentScale)
 	float _currentScale = 1.0f;
 
 	UPROPERTY(Transient)

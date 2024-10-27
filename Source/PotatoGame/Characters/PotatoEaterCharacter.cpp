@@ -28,12 +28,18 @@ void APotatoEaterCharacter::BeginPlay()
 	_springArmComponent = FindComponentByClass<USpringArmComponent>();
 	_initialSpringArmLenght = _springArmComponent->TargetArmLength;
 
-	_potatoEatingComponent->OnCaloriesEatenChanged.AddUObject(this, &APotatoEaterCharacter::OnCaloriesEatenChanged);
+	if (ensure(IsValid(_potatoEatingComponent)))
+	{
+		_potatoEatingComponent->OnCaloriesEatenChanged.AddUObject(this, &APotatoEaterCharacter::OnCaloriesEatenChanged);
+	}
 }
 
 void APotatoEaterCharacter::EndPlay(EEndPlayReason::Type reason)
 {
-	_potatoEatingComponent->OnCaloriesEatenChanged.RemoveAll(this);
+	if (ensure(IsValid(_potatoEatingComponent)))
+	{
+		_potatoEatingComponent->OnCaloriesEatenChanged.RemoveAll(this);
+	}
 }
 
 void APotatoEaterCharacter::OnCaloriesEatenChanged()
@@ -55,7 +61,7 @@ void APotatoEaterCharacter::Authority_SetScale(float scale)
 	}
 }
 
-void APotatoEaterCharacter::OnRep_CurrentScale(float oldScale)
+void APotatoEaterCharacter::OnReplicate_CurrentScale(float oldScale)
 {
 	OnUpdate_CurrentScale(oldScale);
 }

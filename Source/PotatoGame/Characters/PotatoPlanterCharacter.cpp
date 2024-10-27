@@ -5,6 +5,7 @@
 #include "PotatoGame/Characters/PotatoPickUpComponent.h"
 
 #include "Components/InputComponent.h"
+#include "GameplayTagContainer.h"
 
 
 APotatoPlanterCharacter::APotatoPlanterCharacter()

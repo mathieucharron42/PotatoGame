@@ -25,12 +25,11 @@ public:
 	void Server_DropPotato();
 	APotato* Authority_DropPotato();
 
-protected:
+private:
+	virtual void BeginPlay() override;
 	virtual void InitializeComponent() override;
-
 	virtual void UninitializeComponent() override;
 
-private:
 	UFUNCTION()
 	void OnOwnerOverlap(AActor* owningActor, AActor* otherActor);
 	
@@ -40,16 +39,13 @@ private:
 	void OnSetupPlayerInput(UInputComponent* inputComponent);
 
 	UFUNCTION()
-	void OnRep_HeldPotato(APotato* old);
+	void OnReplicate_HeldPotato(APotato* old);
 
 	void SetHeldPotato(APotato* potato);
 
 	void OnUpdate_HeldPotato(APotato* old);
 
-	UPROPERTY()
-	UPotatoPickUpComponent* _potatoPickUpComponent = nullptr;
-
-	UPROPERTY(Transient, Replicated, ReplicatedUsing = OnRep_HeldPotato)
+	UPROPERTY(Transient, Replicated, ReplicatedUsing = OnReplicate_HeldPotato)
 	APotato* _heldPotato = nullptr;
 
 	UPROPERTY(Transient)

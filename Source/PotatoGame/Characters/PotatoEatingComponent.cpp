@@ -1,8 +1,10 @@
 #include "PotatoEatingComponent.h"
 
+#include "PotatoGame/PotatoGame.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
 #include "PotatoGame/Characters/PotatoPickUpComponent.h"
 #include "PotatoGame/Crops/Potato.h"
+#include "PotatoGame/Gameplay/GameplayTagComponent.h"
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
 #include "Components/InputComponent.h"
@@ -12,6 +14,21 @@ UPotatoEatingComponent::UPotatoEatingComponent()
 {
 	bWantsInitializeComponent = true;
 	SetIsReplicatedByDefault(true);
+}
+
+void UPotatoEatingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AActor* owner = Cast<AActor>(GetOwner());
+	if (ensure(IsValid(owner)))
+	{
+		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
+		if (ensure(IsValid(tagsComponent)))
+		{
+			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoEatingCapabale);
+		}
+	}
 }
 
 void UPotatoEatingComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -96,11 +113,23 @@ float UPotatoEatingComponent::GetCaloriesEaten() const
 	return _caloriesEaten;
 }
 
+void UPotatoEatingComponent::Authority_EatHeldPotato()
+{
+	AActor* owner = GetOwner();
+	if (ensure(IsValid(owner)))
+	{
+		if (ensure(owner->HasAuthority()))
+		{
+			if (_potatoPickUpComponent->IsHoldingPotato())
+			{
+				APotato* potato = _potatoPickUpComponent->Authority_DropPotato();
+				Authority_EatPotato(potato);
+			}
+		}
+	}
+}
+
 void UPotatoEatingComponent::Server_EatHeldPotato_Implementation()
 {
-	if (_potatoPickUpComponent->IsHoldingPotato())
-	{
-		APotato* potato = _potatoPickUpComponent->Authority_DropPotato();
-		Authority_EatPotato(potato);
-	}
+	Authority_EatHeldPotato();
 }
