@@ -14,8 +14,11 @@ class POTATOGAME_API UPotatoPlantingComponent : public USceneComponent
 public:	
 	UPotatoPlantingComponent();
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_PlantPotato();
+
+	UFUNCTION(BlueprintCallable)
+	bool CanPlantPotato() const { return _plantingCooldown <= 0; }
 
 private:
 	virtual void BeginPlay() override;
@@ -34,5 +37,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float _spawnVelocity;
 
-	float _timeUntilNextPlant = 0;
+	UPROPERTY(EditAnywhere)
+	float _plantingRate;
+
+	UPROPERTY(Transient, Replicated)
+	float _plantingCooldown = 0;
 };

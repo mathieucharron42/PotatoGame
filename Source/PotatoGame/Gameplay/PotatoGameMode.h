@@ -26,7 +26,9 @@ public:
 	void QuitGame(APotatoPlayerController* playerController);
 
 	APotato* SpawnPotato(const FTransform& transform, const FVector& velocity);
-	
+	void SpawnAIControllers(const TArray<EGameRoleType>& roles);
+	void UnspawnAIControllers(const TArray<EGameRoleType>& roles);
+
 private:
 	static bool IsPossessed(const ACharacter* character);
 	static bool IsPossessedByAI(const ACharacter* character);
@@ -41,8 +43,6 @@ private:
 	FPotatoGameRole GetNextRole(FPotatoGameRole current);
 
 	TOptional<FPotatoGameRole> GetRoleFromCharacterType(APotatoBaseCharacter* character) const;
-
-	void SpawnAIControllers();
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<APotato>> _potatoTypes;

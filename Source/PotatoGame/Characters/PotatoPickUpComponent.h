@@ -16,13 +16,15 @@ class POTATOGAME_API UPotatoPickUpComponent : public USceneComponent
 public:	
 	UPotatoPickUpComponent();
 
+	UFUNCTION(BlueprintCallable)
 	bool IsHoldingPotato() const;
 	bool IsHoldingPotato(APotato* potato) const;
 
 	void Authority_PickupPotato(APotato* potato);
 	
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_DropPotato();
+
 	APotato* Authority_DropPotato();
 
 private:

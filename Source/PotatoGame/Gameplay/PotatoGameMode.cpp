@@ -148,10 +148,10 @@ void APotatoGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnAIControllers();
+	SpawnAIControllers(_aiRoles);
 }
 
-void APotatoGameMode::SpawnAIControllers()
+void APotatoGameMode::SpawnAIControllers(const TArray<EGameRoleType>& roles)
 {
 	UWorld* world = GetWorld();
 	if (ensure(IsValid(world)))
@@ -162,12 +162,37 @@ void APotatoGameMode::SpawnAIControllers()
 			if (!IsPossessed(character))
 			{
 				TOptional<FPotatoGameRole> roleType = GetRoleFromCharacterType(character);
-				if (roleType && _aiRoles.Contains(roleType->GetRoleType()))
+				if (roleType && roles.Contains(roleType->GetRoleType()))
 				{
 					if (ensure(IsValid(_aiControllerClass)))
 					{
 						APotatoAIController* aiController = world->SpawnActor<APotatoAIController>(_aiControllerClass);
 						aiController->Possess(character);
+					}
+				}
+			}
+		}
+	}
+}
+
+void APotatoGameMode::UnspawnAIControllers(const TArray<EGameRoleType>& roles)
+{
+	UWorld* world = GetWorld();
+	if (ensure(IsValid(world)))
+	{
+		for (TActorIterator<APotatoBaseCharacter> it(world); it; ++it)
+		{
+			APotatoBaseCharacter* character = *it;
+			if (IsPossessed(character))
+			{
+				TOptional<FPotatoGameRole> roleType = GetRoleFromCharacterType(character);
+				if (roleType && roles.Contains(roleType->GetRoleType()))
+				{
+					APotatoAIController* aiController = character->GetController<APotatoAIController>();
+					if (IsValid(aiController))
+					{
+						aiController->UnPossess();
+						aiController->Destroy();
 					}
 				}
 			}

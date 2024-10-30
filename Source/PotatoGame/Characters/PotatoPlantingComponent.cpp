@@ -9,11 +9,19 @@
 #include "GameplayTagAssetInterface.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
-static TAutoConsoleVariable<float> CVarPotatoAutoPlantRate (
-	TEXT("Potato.AutoPlantPotatoRate"),
-	-1.f,
-	TEXT("Rate of potato per second (-1 means unset)"),
+static TAutoConsoleVariable<float> CVarPotatoAutoPlantPotato (
+	TEXT("Potato.AutoPlantPotato"),
+	0,
+	TEXT("Auto plant potato (0 for false, 1 for true)"),
+	ECVF_Cheat
+);
+
+static TAutoConsoleVariable<float> CVarPotatoPlantRate(
+	TEXT("Potato.PlantRate"),
+	-1,
+	TEXT("Overrides plant rate (-1 for default"),
 	ECVF_Cheat
 );
 
@@ -22,6 +30,12 @@ UPotatoPlantingComponent::UPotatoPlantingComponent()
 	bWantsInitializeComponent = true;
 	PrimaryComponentTick.bCanEverTick = true;
 	SetIsReplicatedByDefault(true);
+}
+
+void UPotatoPlantingComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UPotatoPlantingComponent, _plantingCooldown);
 }
 
 void UPotatoPlantingComponent::BeginPlay()
@@ -48,14 +62,21 @@ void UPotatoPlantingComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	{
 		if (owner->HasAuthority())
 		{
-			if (CVarPotatoAutoPlantRate.GetValueOnGameThread() != -1)
+			if (_plantingCooldown >= 0)
 			{
-				_timeUntilNextPlant -= DeltaTime;
-				if (_timeUntilNextPlant <= 0)
+				_plantingCooldown -= DeltaTime;
+				if (_plantingCooldown <= 0)
 				{
-					Authority_PlantPotato();
-					_timeUntilNextPlant = CVarPotatoAutoPlantRate.GetValueOnGameThread();
+					_plantingCooldown = 0;
 				}
+			}
+		}
+
+		if (owner->IsLocallyControlled())
+		{
+			if (CVarPotatoAutoPlantPotato.GetValueOnAnyThread())
+			{
+				Server_PlantPotato();
 			}
 		}
 	}
@@ -74,21 +95,27 @@ void UPotatoPlantingComponent::Authority_PlantPotato()
 				USkeletalMeshComponent* meshComponent = owner->GetMesh();
 				if (ensure(IsValid(meshComponent)) && ensure(meshComponent->DoesSocketExist(_spawnSocketName)))
 				{
-					// Locate socket for location
-					FTransform newPotatoTransform = meshComponent->GetSocketTransform(_spawnSocketName);
-
-					// Set random rotation on potato
-					newPotatoTransform.SetRotation(UKismetMathLibrary::RandomRotator(true).Quaternion());
-
-					// Set random velocity in 45 degree half-cone 
-					FVector newPotatoVelocity = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(owner->GetTransform().GetUnitAxis(EAxis::X), 45.f) * _spawnVelocity;
-					newPotatoVelocity.Z = FMath::Abs(newPotatoVelocity.Z);
-
-					APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
-					if (ensure(IsValid(gameMode)))
+					if (CanPlantPotato())
 					{
-						APotato* newPotato = gameMode->SpawnPotato(newPotatoTransform, newPotatoVelocity);
-						UE_LOG(LogPotato, Log, TEXT("Spawned potato %s by %s at %s"), *newPotato->GetName(), *owner->GetName(), *owner->GetTransform().ToString());
+						// Locate socket for location
+						FTransform newPotatoTransform = meshComponent->GetSocketTransform(_spawnSocketName);
+
+						// Set random rotation on potato
+						newPotatoTransform.SetRotation(UKismetMathLibrary::RandomRotator(true).Quaternion());
+
+						// Set random velocity in 45 degree half-cone 
+						FVector newPotatoVelocity = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(owner->GetTransform().GetUnitAxis(EAxis::X), 45.f) * _spawnVelocity;
+						newPotatoVelocity.Z = FMath::Abs(newPotatoVelocity.Z);
+
+						APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
+						if (ensure(IsValid(gameMode)))
+						{
+							APotato* newPotato = gameMode->SpawnPotato(newPotatoTransform, newPotatoVelocity);
+							UE_LOG(LogPotato, Log, TEXT("Spawned potato %s by %s at %s"), *newPotato->GetName(), *owner->GetName(), *owner->GetTransform().ToString());
+
+							const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0? CVarPotatoPlantRate.GetValueOnGameThread() : _plantingRate;
+							_plantingCooldown = effectivePlantRate;
+						}
 					}
 				} 
 			}

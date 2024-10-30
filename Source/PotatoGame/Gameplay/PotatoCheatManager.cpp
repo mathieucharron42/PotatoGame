@@ -186,3 +186,71 @@ void UPotatoCheatManager::Potato_RemoveForceField()
 		}
 	}
 }
+
+void UPotatoCheatManager::Potato_ActivateAIAllCharacter()
+{
+	ActivateAI({ EGameRoleType::Eater,EGameRoleType::Planter, EGameRoleType::Gatherer });
+}
+
+void UPotatoCheatManager::Potato_ActivateAIPlanter()
+{
+	ActivateAI({ EGameRoleType::Planter });
+}
+
+void UPotatoCheatManager::Potato_ActivateAIGatherer()
+{
+	ActivateAI({ EGameRoleType::Gatherer });
+}
+
+void UPotatoCheatManager::Potato_ActivateAIEater()
+{
+	ActivateAI({ EGameRoleType::Eater});
+}
+
+void UPotatoCheatManager::ActivateAI(const TArray<EGameRoleType>& roles)
+{
+	UWorld* world = GetWorld();
+	APotatoPlayerController* controller = Cast<APotatoPlayerController>(GetOuterAPlayerController());
+	if (ensure(IsValid(controller)))
+	{
+		APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
+		if (ensure(IsValid(gameMode)))
+		{
+			gameMode->SpawnAIControllers(roles);
+		}
+	}
+}
+
+void UPotatoCheatManager::Potato_DeactivateAIAllCharacter()
+{
+	DeactivateAI({ EGameRoleType::Eater, EGameRoleType::Gatherer, EGameRoleType::Planter });
+}
+
+void UPotatoCheatManager::Potato_DeactivateAIPlanter()
+{
+	DeactivateAI({ EGameRoleType::Planter });
+}
+
+void UPotatoCheatManager::Potato_DeactivateAIGatherer()
+{
+	DeactivateAI({ EGameRoleType::Gatherer });
+}
+
+void UPotatoCheatManager::Potato_DeactivateAIEater()
+{
+	DeactivateAI({ EGameRoleType::Eater });
+}
+
+void UPotatoCheatManager::DeactivateAI(const TArray<EGameRoleType>& roles)
+{
+	UWorld* world = GetWorld();
+	APotatoPlayerController* controller = Cast<APotatoPlayerController>(GetOuterAPlayerController());
+	if (ensure(IsValid(controller)))
+	{
+		APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
+		if (ensure(IsValid(gameMode)))
+		{
+			gameMode->UnspawnAIControllers(roles);
+		}
+	}
+}

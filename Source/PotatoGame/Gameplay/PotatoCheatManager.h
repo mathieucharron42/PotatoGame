@@ -5,6 +5,8 @@
 
 #include "PotatoCheatManager.generated.h"
 
+enum class EGameRoleType;
+
 UCLASS()
 class POTATOGAME_API UPotatoCheatManager : public UCheatManager
 {
@@ -27,4 +29,32 @@ class POTATOGAME_API UPotatoCheatManager : public UCheatManager
 
 	UFUNCTION(Exec)
 	void Potato_RemoveForceField();
+
+	UFUNCTION(Exec)
+	void Potato_ActivateAIAllCharacter();
+
+	UFUNCTION(Exec)
+	void Potato_ActivateAIPlanter();
+
+	UFUNCTION(Exec)
+	void Potato_ActivateAIGatherer();
+
+	UFUNCTION(Exec)
+	void Potato_ActivateAIEater();
+
+	UFUNCTION(Exec)
+	void Potato_DeactivateAIAllCharacter();
+
+	UFUNCTION(Exec)
+	void Potato_DeactivateAIPlanter();
+
+	UFUNCTION(Exec)
+	void Potato_DeactivateAIGatherer();
+
+	UFUNCTION(Exec)
+	void Potato_DeactivateAIEater();
+
+private:
+	void ActivateAI(const TArray<EGameRoleType>& roles);
+	void DeactivateAI(const TArray<EGameRoleType>& roles);
 };
