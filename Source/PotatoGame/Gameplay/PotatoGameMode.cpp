@@ -279,17 +279,13 @@ APotato* APotatoGameMode::SpawnPotato(const FTransform& transform, const FVector
 	UWorld* world = GetWorld();
 	if (ensure(IsValid(world)))
 	{
-		APotatoGameMode* potatoGameMode = world->GetAuthGameMode<APotatoGameMode>();
-		if (ensure(IsValid(potatoGameMode)))
+		if(ensure(_potatoTypes.Num() > 0))
 		{
-			if(ensure(_potatoTypes.Num() > 0))
-			{
-				const TSubclassOf<APotato>& potatoType = _potatoTypes[FMath::RandRange(0, _potatoTypes.Num() - 1)];
+			const TSubclassOf<APotato>& potatoType = _potatoTypes[FMath::RandRange(0, _potatoTypes.Num() - 1)];
 
-				newPotato = world->SpawnActor<APotato>(potatoType, transform);
-				UPrimitiveComponent* potatoPrimitiveComponent = Cast<UPrimitiveComponent>(newPotato->GetRootComponent());
-				potatoPrimitiveComponent->SetPhysicsLinearVelocity(velocity);
-			}
+			newPotato = world->SpawnActor<APotato>(potatoType, transform);
+			UPrimitiveComponent* potatoPrimitiveComponent = Cast<UPrimitiveComponent>(newPotato->GetRootComponent());
+			potatoPrimitiveComponent->SetPhysicsLinearVelocity(velocity);
 		}
 	}
 
