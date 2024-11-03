@@ -3,11 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Character.h"
 #include "GameplayTagAssetInterface.h"
 #include "GameplayTagContainer.h"
+#include "AI/Navigation/NavQueryFilter.h"
 
 #include "PotatoBaseCharacter.generated.h"
+
+struct FNavigationQueryFilte;
 
 UCLASS(Abstract, config=Game)
 class APotatoBaseCharacter : public ACharacter, public IGameplayTagAssetInterface
@@ -39,9 +43,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
-private:
-	
+	TSubclassOf<UNavigationQueryFilter> GetNavigationQueryFilter() { return _navigationQueryFilter; }
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UNavigationQueryFilter> _navigationQueryFilter;
+
+private:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 

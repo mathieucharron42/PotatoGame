@@ -285,7 +285,10 @@ APotato* APotatoGameMode::SpawnPotato(const FTransform& transform, const FVector
 
 			newPotato = world->SpawnActor<APotato>(potatoType, transform);
 			UPrimitiveComponent* potatoPrimitiveComponent = Cast<UPrimitiveComponent>(newPotato->GetRootComponent());
-			potatoPrimitiveComponent->SetPhysicsLinearVelocity(velocity);
+			if (IsValid(potatoPrimitiveComponent))
+			{
+				potatoPrimitiveComponent->SetPhysicsLinearVelocity(velocity);
+			}
 		}
 	}
 
