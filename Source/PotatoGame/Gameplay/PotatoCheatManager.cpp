@@ -7,8 +7,12 @@
 #include "PotatoGame/Crops/PotatoManagerSubsystem.h"
 #include "PotatoGame/Gameplay/PotatoPlayerController.h"
 #include "PotatoGame/Gameplay/PotatoGameMode.h"
+#include "PotatoGame/Utils/PotatoUtilities.h"
 
 #include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/TriggerBox.h"
+#include <Kismet/KismetMathLibrary.h>
 
 void UPotatoCheatManager::Potato_SpawnPotatoes(int32 amount)
 {
@@ -67,6 +71,64 @@ void UPotatoCheatManager::Potato_ClearPotatoes()
 			else
 			{
 				controller->ServerExec(TEXT("Potato_ClearPotatoes"));
+			}
+		}
+	}
+}
+
+void UPotatoCheatManager::Potato_RainPotatoes(int32 amount, float frequency)
+{
+	UWorld* world = GetWorld();
+	if (ensure(IsValid(world)))
+	{
+		UGameInstance* gameInstance = world->GetGameInstance();
+		if (ensure(IsValid(gameInstance)))
+		{
+			RainPotatoLoop(amount, frequency);
+		}
+	}
+}
+
+void UPotatoCheatManager::RainPotatoLoop(int32 remaining, float frequency)
+{
+	UE_LOG(LogPotato, Log, TEXT("Raining potato (remaining %d at every %f sec)"), remaining, frequency);
+	UWorld* world = GetWorld();
+	if (ensure(IsValid(world)))
+	{
+		UGameInstance* gameInstance = world->GetGameInstance();
+		if (ensure(IsValid(gameInstance)))
+		{
+			APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
+			if (ensure(IsValid(gameMode)))
+			{
+				if (remaining > 0)
+				{
+					TArray<AActor*> clouds;
+					UGameplayStatics::GetAllActorsWithTag(world, FName("PotatoCloud"), clouds);
+
+					if (clouds.Num() > 0)
+					{
+						const ATriggerBox* cloud = Cast<ATriggerBox>(clouds[FMath::RandRange(0, clouds.Num() - 1)]);
+						if (IsValid(cloud))
+						{
+							const FBox box = cloud->GetComponentsBoundingBox();
+
+							const FVector location = UKismetMathLibrary::RandomPointInBoundingBox_Box(box);
+
+							FTransform potatoTransform;
+							potatoTransform.SetLocation(location);
+							const FVector velocity = FVector::ZeroVector;
+							gameMode->SpawnPotato(potatoTransform, velocity);
+
+							const auto callback = FTimerDelegate::CreateUObject(this, &UPotatoCheatManager::RainPotatoLoop, remaining - 1, frequency);
+							const float delay = FMath::Max(frequency, 0.0000000001f);
+							const bool loop = false;
+
+							FTimerHandle handle;
+							gameInstance->GetTimerManager().SetTimer(handle, callback, delay, loop);
+						}
+					}
+				}
 			}
 		}
 	}

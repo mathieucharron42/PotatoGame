@@ -11,12 +11,15 @@ UCLASS()
 class POTATOGAME_API UPotatoCheatManager : public UCheatManager
 {
 	GENERATED_BODY()
-	
+
 	UFUNCTION(Exec)
 	void Potato_SpawnPotatoes(int32 amount);
 
 	UFUNCTION(Exec)
 	void Potato_ClearPotatoes();
+
+	UFUNCTION(Exec)
+	void Potato_RainPotatoes(int32 amount, float frequency);
 
 	UFUNCTION(Exec)
 	void Potato_ScalePotatoes(float scale);
@@ -55,6 +58,8 @@ class POTATOGAME_API UPotatoCheatManager : public UCheatManager
 	void Potato_DeactivateAIEater();
 
 private:
+	void RainPotatoLoop(int32 remaining, float frequency);
+
 	void ActivateAI(const TArray<EGameRoleType>& roles);
 	void DeactivateAI(const TArray<EGameRoleType>& roles);
 };
