@@ -94,7 +94,7 @@ void UDebugDrawInWorldComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 		if (_selfDestructTime.GetValue() <= 0)
 		{
-			if (_selfDestructActor)
+			if (_selfDestructType == ESelfDestructType::Actor)
 			{
 				AActor* actor = GetOwner();
 				if (ensure(actor))
@@ -102,7 +102,7 @@ void UDebugDrawInWorldComponent::TickComponent(float DeltaTime, ELevelTick TickT
 					actor->Destroy();
 				}
 			}
-			else if (_selfDestructComponent)
+			else if (_selfDestructType == ESelfDestructType::Component)
 			{
 				DestroyComponent();
 			}
@@ -112,16 +112,26 @@ void UDebugDrawInWorldComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 void UDebugDrawInWorldComponent::EnableSelfDestructActor(float delay)
 {
-	_selfDestructActor = true;
+	_selfDestructType = ESelfDestructType::Actor;
 	_selfDestructDelay = delay;
 	_selfDestructTime.Reset();
 }
 
 void UDebugDrawInWorldComponent::EnableSelfDestructComponent(float delay)
 {
-	_selfDestructComponent = true;
+	_selfDestructType = ESelfDestructType::Component;
 	_selfDestructDelay = delay;
 	_selfDestructTime.Reset();
+}
+
+void UDebugDrawInWorldComponent::ForceSelfDestruct()
+{
+	if (_selfDestructType == ESelfDestructType::None)
+	{
+		// Assume we want to destroy component if no self destruct was in progress
+		EnableSelfDestructComponent(1);
+	}
+	_selfDestructTime = 0;
 }
 
 bool UDebugDrawInWorldComponent::ShouldDraw(bool enabled, bool hasDrawn, EDrawRate drawRate) const

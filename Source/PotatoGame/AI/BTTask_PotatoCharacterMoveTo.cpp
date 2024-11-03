@@ -12,6 +12,21 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "AIModule/Classes/AIController.h"
 
+uint16 UBTTask_PotatoCharacterMoveTo::GetInstanceMemorySize() const
+{
+	return sizeof(FBTPotatoCharacterMoveToTaskMemory);
+}
+
+void UBTTask_PotatoCharacterMoveTo::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryInit::Type InitType) const
+{
+	InitializeNodeMemory<FBTPotatoCharacterMoveToTaskMemory>(NodeMemory, InitType);
+}
+
+void UBTTask_PotatoCharacterMoveTo::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTMemoryClear::Type CleanupType) const
+{
+	CleanupNodeMemory<FBTPotatoCharacterMoveToTaskMemory>(NodeMemory, CleanupType);
+}
+
 EBTNodeResult::Type UBTTask_PotatoCharacterMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();
@@ -24,13 +39,23 @@ EBTNodeResult::Type UBTTask_PotatoCharacterMoveTo::ExecuteTask(UBehaviorTreeComp
 			FilterClass = potatoCharacter->GetNavigationQueryFilter();			
 		}
 
-		SetDebugTarget(OwnerComp);
+		SetDebugTarget(OwnerComp, NodeMemory);
 	}
 
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }
 
-void UBTTask_PotatoCharacterMoveTo::SetDebugTarget(const UBehaviorTreeComponent& behaviourTreeComponent)
+void UBTTask_PotatoCharacterMoveTo::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult)
+{
+	FBTPotatoCharacterMoveToTaskMemory* myMemory = CastInstanceNodeMemory<FBTPotatoCharacterMoveToTaskMemory>(NodeMemory);
+	if (myMemory->TargetDebugInWorldComponent.IsValid())
+	{
+		myMemory->TargetDebugInWorldComponent->ForceSelfDestruct();
+	}
+	Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
+}
+
+void UBTTask_PotatoCharacterMoveTo::SetDebugTarget(const UBehaviorTreeComponent& behaviourTreeComponent, uint8* nodeMemory)
 {
 	if (_showDebugTarget)
 	{
@@ -84,8 +109,9 @@ void UBTTask_PotatoCharacterMoveTo::SetDebugTarget(const UBehaviorTreeComponent&
 				properties.Radius = _debugTargetRadius;
 				properties.Color = _debugTargetColor;
 				properties.NbSegments = _debugTargetSegments;
-				properties.Lifetime = _debugTargetLifetime;
-				const bool drawOnce = true;
+				properties.Lifetime = -1;
+				properties.DrawRate = EDrawRate::EveryFrame;
+				
 				targetDebugInWorldComponent->EnableDrawSphere(properties);
 
 				if (dummyActorCreated)
@@ -96,6 +122,9 @@ void UBTTask_PotatoCharacterMoveTo::SetDebugTarget(const UBehaviorTreeComponent&
 				{
 					targetDebugInWorldComponent->EnableSelfDestructComponent(_debugTargetLifetime);
 				}
+
+				FBTPotatoCharacterMoveToTaskMemory* myMemory = CastInstanceNodeMemory<FBTPotatoCharacterMoveToTaskMemory>(nodeMemory);
+				myMemory->TargetDebugInWorldComponent = targetDebugInWorldComponent;
 			}
 		}
 	}

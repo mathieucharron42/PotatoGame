@@ -105,7 +105,11 @@ struct FDrawInWorldTextProperties : public FDrawInWorldCommonProperties
 	FString Text;
 };
 
-
+UENUM()
+enum class ESelfDestructType
+{
+	None, Actor, Component
+};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class POTATOGAME_API UDebugDrawInWorldComponent : public USceneComponent
@@ -116,9 +120,10 @@ public:
 	UDebugDrawInWorldComponent(const FObjectInitializer& ObjectInitializer);
 
 	void EnableDrawSphere(const FDrawInWorldSphereProperties& properties);
-
+	
 	void EnableSelfDestructActor(float delay);
 	void EnableSelfDestructComponent(float delay);
+	void ForceSelfDestruct();
 
 private:
 	virtual void BeginPlay() override;
@@ -183,10 +188,7 @@ private:
 
 
 	UPROPERTY(EditAnywhere, Category = "Behaviour")
-	bool _selfDestructComponent = false;
-
-	UPROPERTY(EditAnywhere, Category = "Behaviour")
-	bool _selfDestructActor = false;
+	ESelfDestructType _selfDestructType = ESelfDestructType::None;
 
 	UPROPERTY(EditAnywhere, Category = "Behaviour")
 	float _selfDestructDelay = -1;
