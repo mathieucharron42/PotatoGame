@@ -16,6 +16,8 @@ class APotatoPlayerController;
 UCLASS()
 class POTATOGAME_API APotatoGameMode : public AGameMode
 {
+	friend class UPotatoCheatManager;
+
 	GENERATED_BODY()
 
 public:
@@ -26,8 +28,6 @@ public:
 	void QuitGame(APotatoPlayerController* playerController);
 
 	APotato* SpawnPotato(const FTransform& transform, const FVector& velocity);
-	void SpawnAIControllers(const TArray<EGameRoleType>& roles);
-	void UnspawnAIControllers(const TArray<EGameRoleType>& roles);
 
 private:
 	static bool IsPossessed(const ACharacter* character);
@@ -37,6 +37,12 @@ private:
 	virtual void RestartPlayer(AController* NewPlayer) override;
 	
 	void CheckGameEnded();
+
+	void SetAIRoles(const TArray<EGameRoleType>& roles);
+	const TArray<EGameRoleType>& GetAIRoles() const;
+	void RefreshAIControllers();
+	void SpawnAIControllers(const TArray<EGameRoleType>& roles);
+	void UnspawnAIControllers(const TArray<EGameRoleType>& roles);
 
 	APotatoBaseCharacter* FindSuitableCharacter(const TSubclassOf<APotatoBaseCharacter>& type);
 	bool IsSuitableCharacter(const TSubclassOf<APotatoBaseCharacter>& type, const APotatoBaseCharacter* character);

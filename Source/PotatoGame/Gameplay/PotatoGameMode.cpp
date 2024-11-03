@@ -200,6 +200,23 @@ void APotatoGameMode::UnspawnAIControllers(const TArray<EGameRoleType>& roles)
 	}
 }
 
+void APotatoGameMode::RefreshAIControllers()
+{
+	TArray<EGameRoleType> toAdd;
+	TArray<EGameRoleType> toRemove;
+	for (FPotatoGameRole role : _supportedRoles)
+	{
+		if (_aiRoles.Contains(role.GetRoleType()))
+		{
+			SpawnAIControllers({ role.GetRoleType() });
+		}
+		else
+		{
+			UnspawnAIControllers({ role.GetRoleType() });
+		}
+	}
+}
+
 void APotatoGameMode::Tick(float dt)
 {
 	Super::Tick(dt);
@@ -229,6 +246,8 @@ bool APotatoGameMode::ChangeRole(APotatoPlayerController* playerController)
 			found = true;
 		}
 	}
+
+	SpawnAIControllers(_aiRoles);
 
 	return found;
 }
@@ -293,4 +312,14 @@ APotato* APotatoGameMode::SpawnPotato(const FTransform& transform, const FVector
 	}
 
 	return newPotato;
+}
+
+void APotatoGameMode::SetAIRoles(const TArray<EGameRoleType>& roles)
+{
+	_aiRoles = roles;
+}
+
+const TArray<EGameRoleType>& APotatoGameMode::GetAIRoles() const
+{
+	return _aiRoles;
 }

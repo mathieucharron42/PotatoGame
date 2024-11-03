@@ -251,7 +251,7 @@ void UPotatoCheatManager::Potato_RemoveForceField()
 
 void UPotatoCheatManager::Potato_ActivateAIAllCharacter()
 {
-	ActivateAI({ EGameRoleType::Eater,EGameRoleType::Planter, EGameRoleType::Gatherer });
+	ActivateAI({ EGameRoleType::Eater, EGameRoleType::Planter, EGameRoleType::Gatherer });
 }
 
 void UPotatoCheatManager::Potato_ActivateAIPlanter()
@@ -278,7 +278,13 @@ void UPotatoCheatManager::ActivateAI(const TArray<EGameRoleType>& roles)
 		APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
 		if (ensure(IsValid(gameMode)))
 		{
-			gameMode->SpawnAIControllers(roles);
+			TArray<EGameRoleType> newRoles = gameMode->GetAIRoles();
+			for (EGameRoleType newRole : roles)
+			{
+				newRoles.AddUnique(newRole);
+			}
+			gameMode->SetAIRoles(newRoles);
+			gameMode->RefreshAIControllers();
 		}
 	}
 }
@@ -312,7 +318,13 @@ void UPotatoCheatManager::DeactivateAI(const TArray<EGameRoleType>& roles)
 		APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
 		if (ensure(IsValid(gameMode)))
 		{
-			gameMode->UnspawnAIControllers(roles);
+			TArray<EGameRoleType> newRoles = gameMode->GetAIRoles();
+			for (EGameRoleType deleteRole : roles)
+			{
+				newRoles.Remove(deleteRole);
+			}
+			gameMode->SetAIRoles(newRoles);
+			gameMode->RefreshAIControllers();
 		}
 	}
 }
