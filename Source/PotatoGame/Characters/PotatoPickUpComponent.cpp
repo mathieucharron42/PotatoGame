@@ -65,32 +65,24 @@ void UPotatoPickUpComponent::UninitializeComponent()
 
 void UPotatoPickUpComponent::OnOwnerOverlap(AActor* owningActor, AActor* otherActor)
 {
-	AActor* owner = GetOwner();
-	if (ensure(IsValid(owner)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		if (owner->HasAuthority())
+		if (otherActor->IsA<APotato>())
 		{
-			if (otherActor->IsA<APotato>())
-			{
-				APotato* potato = Cast<APotato>(otherActor);
-				Authority_PickupPotato(potato);
-			}
+			APotato* potato = Cast<APotato>(otherActor);
+			Authority_PickupPotato(potato);
 		}
 	}
 }
 
 void UPotatoPickUpComponent::OnOwnerHit(AActor* owningActor, AActor* otherActor, FVector normalImpulse, const FHitResult& hit)
 {
-	AActor* owner = GetOwner();
-	if (ensure(IsValid(owner)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		if (owner->HasAuthority())
+		if (otherActor->IsA<APotato>())
 		{
-			if (otherActor->IsA<APotato>())
-			{
-				APotato* potato = Cast<APotato>(otherActor);
-				Authority_PickupPotato(potato);
-			}
+			APotato* potato = Cast<APotato>(otherActor);
+			Authority_PickupPotato(potato);
 		}
 	}
 }
@@ -108,11 +100,11 @@ void UPotatoPickUpComponent::Authority_PickupPotato(APotato* potato)
 	AActor* owner = GetOwner();
 	if (ensure(IsValid(owner)))
 	{
-		if (ensure(owner->HasAuthority()))
+		if (ensure(PotatoUtilities::HasAuthority(owner)))
 		{
 			if (!IsHoldingPotato())
 			{
-				SetHeldPotato(potato);
+				Authority_SetHeldPotato(potato);
 				UE_LOG(LogPotato, Log, TEXT("Pick up potato %s by %s at %s"), *potato->GetName(), *owner->GetName(), *owner->GetTransform().ToString());
 			}
 		}
@@ -129,16 +121,13 @@ APotato* UPotatoPickUpComponent::Authority_DropPotato()
 	APotato* potato = nullptr;
 
 	AActor* owner = GetOwner();
-	if (ensure(IsValid(owner)))
+	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		if (ensure(owner->HasAuthority()))
+		if (IsHoldingPotato())
 		{
-			if (IsHoldingPotato())
-			{
-				potato = _heldPotato;
-				SetHeldPotato(nullptr);
-				UE_LOG(LogPotato, Log, TEXT("Pick up potato %s by %s"), *potato->GetName(), *owner->GetName());
-			}
+			potato = _heldPotato;
+			Authority_SetHeldPotato(nullptr);
+			UE_LOG(LogPotato, Log, TEXT("Pick up potato %s by %s"), *potato->GetName(), *owner->GetName());
 		}
 	}
 
@@ -147,7 +136,19 @@ APotato* UPotatoPickUpComponent::Authority_DropPotato()
 
 bool UPotatoPickUpComponent::IsHoldingPotato() const
 {
-	return IsValid(_heldPotato);
+	bool isHoldingPotato = false;
+	if (IsValid(_heldPotato))
+	{
+		const UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (ensure(IsValid(gameplayTagComponent)))
+		{
+			if (gameplayTagComponent->GetContainer().HasTag(Character_Behaviour_State_HoldingPotato))
+			{
+				isHoldingPotato = true;
+			}
+		}
+	}
+	return isHoldingPotato;
 }
 
 bool UPotatoPickUpComponent::IsHoldingPotato(APotato* potato) const
@@ -160,10 +161,24 @@ void UPotatoPickUpComponent::OnReplicate_HeldPotato(APotato* old)
 	OnUpdate_HeldPotato(old);
 }
 
-void UPotatoPickUpComponent::SetHeldPotato(APotato* potato)
+void UPotatoPickUpComponent::Authority_SetHeldPotato(APotato* potato)
 {
 	APotato* previous = _heldPotato;
 	_heldPotato = potato;
+
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (IsValid(gameplayTagComponent))
+	{
+		if (_heldPotato)
+		{
+			gameplayTagComponent->GetContainer().AddTag(Character_Behaviour_State_HoldingPotato);
+		}
+		else
+		{
+			gameplayTagComponent->GetContainer().RemoveTag(Character_Behaviour_State_HoldingPotato);
+		}
+	}
+
 	OnUpdate_HeldPotato(previous);
 }
 

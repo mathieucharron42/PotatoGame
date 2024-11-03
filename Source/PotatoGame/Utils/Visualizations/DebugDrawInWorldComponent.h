@@ -4,13 +4,21 @@
 #include "Components/SceneComponent.h"
 #include "DebugDrawInWorldComponent.generated.h"
 
+UENUM()
+enum class EDrawRate
+{
+	Once, EveryFrame
+};
+
 USTRUCT()
-struct FDrawInWorldPointProperties
+struct FDrawInWorldCommonProperties
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	int32 Size = 5;
+	EDrawRate DrawRate = EDrawRate::Once;
+
+	int8 DepthRenderingPriority = 0;
 
 	UPROPERTY(EditAnywhere)
 	FColor Color = FColor::White;
@@ -20,7 +28,16 @@ struct FDrawInWorldPointProperties
 };
 
 USTRUCT()
-struct FDrawInWorldBoxProperties
+struct FDrawInWorldPointProperties : public FDrawInWorldCommonProperties
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	int32 Size = 5;
+};
+
+USTRUCT()
+struct FDrawInWorldBoxProperties : public FDrawInWorldCommonProperties
 {
 	GENERATED_BODY()
 
@@ -30,18 +47,12 @@ struct FDrawInWorldBoxProperties
 	UPROPERTY(EditAnywhere)
 	bool InheritRotation;
 
-	UPROPERTY(EditAnywhere)
-	FColor Color = FColor::White;
-
 	UPROPERTY(EditAnywhere);
 	float Thickness = 2.0f;
-
-	UPROPERTY(EditAnywhere)
-	float Lifetime = -1.f;
 };
 
 USTRUCT()
-struct FDrawInWorldSphereProperties
+struct FDrawInWorldSphereProperties : public FDrawInWorldCommonProperties
 {
 	GENERATED_BODY()
 
@@ -51,18 +62,12 @@ struct FDrawInWorldSphereProperties
 	UPROPERTY(EditAnywhere)
 	float NbSegments = 10;
 
-	UPROPERTY(EditAnywhere)
-	FColor Color = FColor::White;
-
 	UPROPERTY(EditAnywhere);
 	float Thickness = 2.0f;
-
-	UPROPERTY(EditAnywhere)
-	float Lifetime = 0.f;
 };
 
 USTRUCT()
-struct FDrawInWorldArrowProperties
+struct FDrawInWorldArrowProperties : public FDrawInWorldCommonProperties
 {
 	GENERATED_BODY()
 
@@ -80,16 +85,10 @@ struct FDrawInWorldArrowProperties
 
 	UPROPERTY(EditAnywhere);
 	float Size = 20.0f;
-
-	UPROPERTY(EditAnywhere)
-	FColor Color = FColor::White;
-
-	UPROPERTY(EditAnywhere)
-	float Lifetime = 0.f;
 };
 
 USTRUCT()
-struct FDrawInWorldTextProperties
+struct FDrawInWorldTextProperties : public FDrawInWorldCommonProperties
 {
 	GENERATED_BODY()
 
@@ -104,13 +103,9 @@ struct FDrawInWorldTextProperties
 
 	UPROPERTY(EditAnywhere)
 	FString Text;
-
-	UPROPERTY(EditAnywhere)
-	FColor Color = FColor::White;
-
-	UPROPERTY(EditAnywhere)
-	float Lifetime = 0.f;
 };
+
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class POTATOGAME_API UDebugDrawInWorldComponent : public USceneComponent
@@ -120,9 +115,17 @@ class POTATOGAME_API UDebugDrawInWorldComponent : public USceneComponent
 public:	
 	UDebugDrawInWorldComponent(const FObjectInitializer& ObjectInitializer);
 
+	void EnableDrawSphere(const FDrawInWorldSphereProperties& properties);
+
+	void EnableSelfDestructActor(float delay);
+	void EnableSelfDestructComponent(float delay);
+
 private:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	bool ShouldDraw(bool enabled, bool hasDrawn, EDrawRate drawRate) const;
+
 
 	UPROPERTY(EditAnywhere, Category = "Debug Point")
 	bool _pointEnabled = false;
@@ -130,11 +133,21 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Debug Point", meta = (EditCondition = "_pointEnabled"))
 	FDrawInWorldPointProperties _pointProperties;
 
+	UPROPERTY(Transient)
+	bool _hasDrawPoint = false;
+
+
+
 	UPROPERTY(EditAnywhere, Category = "Debug Sphere")
 	bool _sphereEnabled = false;
 
 	UPROPERTY(EditAnywhere, Category = "Debug Sphere", meta = (EditCondition = "_sphereEnabled"))
 	FDrawInWorldSphereProperties _sphereProperties;
+
+	UPROPERTY(Transient)
+	bool _hasDrawnSphere = false;
+
+
 
 	UPROPERTY(EditAnywhere, Category = "Debug Box")
 	bool _boxEnabled = false;
@@ -142,15 +155,42 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Debug Box", meta = (EditCondition = "_boxEnabled"))
 	FDrawInWorldBoxProperties _boxProperties;
 
+	UPROPERTY(Transient)
+	bool _hasDrawnBox = false;
+
+
+
 	UPROPERTY(EditAnywhere, Category = "Debug Arrow")
 	bool _arrowEnabled = false;
 
 	UPROPERTY(EditAnywhere, Category = "Debug Arrow", meta = (EditCondition = "_arrowEnabled"))
 	FDrawInWorldArrowProperties _arrowProperties;
 
+	UPROPERTY(Transient)
+	bool _hasDrawnArrow = false;
+
+
+
 	UPROPERTY(EditAnywhere, Category = "Debug Text")
 	bool _textEnabled = false;
 
 	UPROPERTY(EditAnywhere, Category = "Debug Text", meta = (EditCondition = "_textEnabled"))
 	FDrawInWorldTextProperties _textProperties;
+
+	UPROPERTY(Transient)
+	bool _hasDrawnText = false;
+
+
+
+	UPROPERTY(EditAnywhere, Category = "Behaviour")
+	bool _selfDestructComponent = false;
+
+	UPROPERTY(EditAnywhere, Category = "Behaviour")
+	bool _selfDestructActor = false;
+
+	UPROPERTY(EditAnywhere, Category = "Behaviour")
+	float _selfDestructDelay = -1;
+
+	UPROPERTY(Transient)
+	TOptional<float> _selfDestructTime;
 };

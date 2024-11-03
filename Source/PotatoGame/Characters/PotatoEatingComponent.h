@@ -50,7 +50,4 @@ private:
 
 	UPROPERTY(Transient, Replicated)
 	float _caloriesEaten;
-
-	UPROPERTY(Transient)
-	UPotatoPickUpComponent* _potatoPickUpComponent = nullptr;
 };

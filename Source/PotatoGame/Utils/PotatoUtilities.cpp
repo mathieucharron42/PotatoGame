@@ -44,3 +44,23 @@ void PotatoUtilities::DoSomethingElse(int32 value)
 		wastedMemory.SetNumUninitialized(value);
 	}
 }
+
+bool PotatoUtilities::HasAuthority(const UActorComponent* actorComponent)
+{
+	bool hasAuthority = false;
+	if (ensure(IsValid(actorComponent)))
+	{
+		hasAuthority = HasAuthority(actorComponent->GetOwner());
+	}
+	return hasAuthority;
+}
+
+bool PotatoUtilities::HasAuthority(const AActor* actor)
+{
+	bool hasAuthority = false;
+	if (ensure(IsValid(actor)))
+	{
+		hasAuthority = actor->HasAuthority();
+	}
+	return hasAuthority;
+}

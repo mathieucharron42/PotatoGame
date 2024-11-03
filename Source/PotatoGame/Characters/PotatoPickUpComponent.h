@@ -43,7 +43,7 @@ private:
 	UFUNCTION()
 	void OnReplicate_HeldPotato(APotato* old);
 
-	void SetHeldPotato(APotato* potato);
+	void Authority_SetHeldPotato(APotato* potato);
 
 	void OnUpdate_HeldPotato(APotato* old);
 

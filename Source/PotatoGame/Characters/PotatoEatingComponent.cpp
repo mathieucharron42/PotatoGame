@@ -43,7 +43,6 @@ void UPotatoEatingComponent::InitializeComponent()
 	APotatoBaseCharacter* owner = Cast<APotatoBaseCharacter>(GetOwner());
 	if (ensure(IsValid(owner)))
 	{
-		_potatoPickUpComponent = owner->FindComponentByClass<UPotatoPickUpComponent>();
 		owner->OnSetupPlayerInput.AddUObject(this, &UPotatoEatingComponent::OnSetupPlayerInput);
 	}
 }
@@ -84,17 +83,14 @@ void UPotatoEatingComponent::Server_EatPotato_Implementation(APotato* potato)
 void UPotatoEatingComponent::Authority_EatPotato(APotato* potato)
 {
 	AActor* owner = GetOwner();
-	if (ensure(IsValid(owner)))
+	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		if (ensure(owner->HasAuthority()))
-		{
-			const FNutritionalInformations& nutritionalInformations = potato->GetNutritionalInformations();
-			float newCalories = nutritionalInformations.GetCalories(potato->GetWeight());
-			SetCaloriesEaten(GetCaloriesEaten() + newCalories);
-			potato->Destroy();
+		const FNutritionalInformations& nutritionalInformations = potato->GetNutritionalInformations();
+		float newCalories = nutritionalInformations.GetCalories(potato->GetWeight());
+		SetCaloriesEaten(GetCaloriesEaten() + newCalories);
+		potato->Destroy();
 
-			UE_LOG(LogPotato, Log, TEXT("Ate potato %s by %s at %s"), *potato->GetName(), *owner->GetName(), *owner->GetTransform().ToString());
-		}
+		UE_LOG(LogPotato, Log, TEXT("Ate potato %s by %s at %s"), *potato->GetName(), *owner->GetName(), *owner->GetTransform().ToString());
 	}
 }
 
@@ -115,10 +111,10 @@ float UPotatoEatingComponent::GetCaloriesEaten() const
 
 void UPotatoEatingComponent::Authority_EatHeldPotato()
 {
-	AActor* owner = GetOwner();
-	if (ensure(IsValid(owner)))
+	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		if (ensure(owner->HasAuthority()))
+		UPotatoPickUpComponent* _potatoPickUpComponent = PotatoUtilities::GetComponentByClass<UPotatoPickUpComponent>(this);
+		if (ensure(IsValid(_potatoPickUpComponent)))
 		{
 			if (_potatoPickUpComponent->IsHoldingPotato())
 			{

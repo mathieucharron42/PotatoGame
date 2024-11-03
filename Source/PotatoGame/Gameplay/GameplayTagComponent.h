@@ -21,6 +21,8 @@ public:
 
 	FGameplayTagContainer& GetContainer() { return _gameplayTagContainer; }
 
+	const FGameplayTagContainer& GetContainer() const { return _gameplayTagContainer; }
+
 protected:
 	UPROPERTY(BlueprintReadWrite, Transient)
 	FGameplayTagContainer _gameplayTagContainer;
