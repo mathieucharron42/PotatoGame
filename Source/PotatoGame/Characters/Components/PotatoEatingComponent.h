@@ -18,9 +18,6 @@ class POTATOGAME_API UPotatoEatingComponent : public USceneComponent
 public:		
 	UPotatoEatingComponent();
 
-	DECLARE_MULTICAST_DELEGATE(FCaloriesEatenChanged);
-	FCaloriesEatenChanged OnCaloriesEatenChanged;
-
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_EatHeldPotato();
 

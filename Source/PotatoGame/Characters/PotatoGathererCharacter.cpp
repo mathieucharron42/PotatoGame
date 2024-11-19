@@ -1,7 +1,7 @@
 #include "PotatoGathererCharacter.h"
 
-#include "PotatoGame/Characters/PotatoPickUpComponent.h"
-#include "PotatoGame/Characters/ObstacleCrosserComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
+#include "PotatoGame/Characters/Components/ObstacleCrosserComponent.h"
 
 APotatoGathererCharacter::APotatoGathererCharacter()
 {

@@ -1,7 +1,7 @@
 #include "PotatoEaterCharacter.h"
 
-#include "PotatoGame/Characters/PotatoEatingComponent.h"
-#include "PotatoGame/Characters/PotatoPickUpComponent.h"
+#include "PotatoGame/Characters/Components/PotatoEatingComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
 
 #include "GameFramework/SpringArmComponent.h"
 

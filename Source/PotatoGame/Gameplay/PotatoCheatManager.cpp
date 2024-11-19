@@ -2,7 +2,7 @@
 
 #include "PotatoGame/Blockers/ForceField.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
-#include "PotatoGame/Characters/PotatoPickupComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickupComponent.h"
 #include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Crops/PotatoManagerSubsystem.h"
 #include "PotatoGame/Gameplay/PotatoPlayerController.h"

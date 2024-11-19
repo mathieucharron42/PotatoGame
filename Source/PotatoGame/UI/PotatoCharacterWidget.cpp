@@ -7,9 +7,10 @@
 #include "PotatoGame/Gameplay/PotatoPlayerController.h"
 #include "PotatoGame/Gameplay/PotatoPlayerState.h"
 
-#include "PotatoGame/Characters/PotatoEatingComponent.h"
-#include "PotatoGame/Characters/PotatoPickUpComponent.h"
-#include "PotatoGame/Characters/PotatoPlantingComponent.h"
+#include "PotatoGame/Characters/Components/PotatoEatingComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPlantingComponent.h"
+#include "PotatoGame/Characters/Components/ObstacleCrosserComponent.h"
 
 void UPotatoCharacterWidget::SetTargetPlayer(APotatoPlayerController* player)
 {
@@ -61,6 +62,12 @@ void UPotatoCharacterWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 				if (IsValid(potatoPlantingComponent))
 				{
 					instructions.Add(TEXT("Left click to spawn potatoes"));
+				}
+
+				UObstacleCrosserComponent* obastacleCrosserComponent = pawn->FindComponentByClass<UObstacleCrosserComponent>();
+				if (IsValid(obastacleCrosserComponent))
+				{
+					instructions.Add(TEXT("Cross obstacles by walking through them"));
 				}
 
 				UPotatoEatingComponent* potatoEatingComponent = pawn->FindComponentByClass<UPotatoEatingComponent>();
