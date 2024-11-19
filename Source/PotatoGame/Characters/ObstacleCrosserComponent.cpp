@@ -1,5 +1,8 @@
 #include "ObstacleCrosserComponent.h"
 
+#include "PotatoGame/PotatoGame.h"
+#include "PotatoGame/Gameplay/GameplayTagComponent.h"
+
 #include "Components/CapsuleComponent.h"
 
 UObstacleCrosserComponent::UObstacleCrosserComponent()
@@ -23,6 +26,12 @@ void UObstacleCrosserComponent::AllowObastacleCrossing()
 		if (IsValid(primitiveComponent))
 		{
 			primitiveComponent->SetCollisionResponseToChannel(_allowedCollisionChannel, ECollisionResponse::ECR_Ignore);
+		}
+
+		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
+		if (ensure(IsValid(tagsComponent)))
+		{
+			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoObstacleCrossing);
 		}
 	}
 }

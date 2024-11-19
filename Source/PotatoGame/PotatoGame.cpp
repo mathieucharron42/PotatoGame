@@ -7,7 +7,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoPickupCapabale, "Charac
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoPlantingCapabale, "Character.Behaviour.PotatoPlantingCapabale", "Able to plant potato");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoHoldingCapabale, "Character.Behaviour.PotatoHoldingCapabale", "Able to hold potato");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoEatingCapabale, "Character.Behaviour.PotatoEatingCapabale", "Able to eat potato");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoForceFieldCrossing, "Character.Behaviour.PotatoForceFieldCrossing", "Able to cross force field");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoObstacleCrossing, "Character.Behaviour.PotatoForceFieldCrossing", "Able to cross force field");
 
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_State_HoldingPotato, "Character.Behaviour.State.HoldingPotato", "Whether is currently holding potato");
 
