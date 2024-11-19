@@ -7,6 +7,7 @@
 #include "PotatoEatingComponent.generated.h"
 
 class APotato;
+class USpringArmComponent;
 class UPotatoPickUpComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -34,20 +35,36 @@ public:
 
 private:
 	virtual void BeginPlay() override;
-	void Authority_EatHeldPotato();
-	void Authority_EatPotato(APotato* potato);
-
 	virtual void InitializeComponent() override;
-
 	virtual void UninitializeComponent() override;
 
 	void OnSetupPlayerInput(UInputComponent* inputComponent);
 
+	void Authority_EatHeldPotato();
+	void Authority_EatPotato(APotato* potato);
+
 	void SetCaloriesEaten(float calories);
+
+	void Authority_SetScale(float scale);
+	UFUNCTION()
+	void OnReplicate_CurrentScale(float oldScale);
+	void Local_UpdateCurrentScale(float oldScale);
 
 	UPROPERTY(EditAnywhere)
 	float _caloriesNeeded;
 
 	UPROPERTY(Transient, Replicated)
 	float _caloriesEaten;
+
+	UPROPERTY(Transient, Replicated, ReplicatedUsing = OnReplicate_CurrentScale)
+	float _currentScale = 1.0f;
+
+	UPROPERTY(Transient)
+	int32 _initialSpringArmLenght;
+
+	UPROPERTY(EditAnywhere)
+	float _caloryScale;
+
+	UPROPERTY(Transient)
+	USpringArmComponent* _springArmComponent;
 };

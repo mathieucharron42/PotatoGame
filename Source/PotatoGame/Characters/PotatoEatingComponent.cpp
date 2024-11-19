@@ -8,6 +8,7 @@
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
 #include "Components/InputComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Net/UnrealNetwork.h"
 
 UPotatoEatingComponent::UPotatoEatingComponent()
@@ -28,6 +29,12 @@ void UPotatoEatingComponent::BeginPlay()
 		{
 			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoEatingCapabale);
 		}
+
+		_springArmComponent = owner->FindComponentByClass<USpringArmComponent>();
+		if (IsValid(_springArmComponent))
+		{
+			_initialSpringArmLenght = _springArmComponent->TargetArmLength;
+		}
 	}
 }
 
@@ -35,6 +42,7 @@ void UPotatoEatingComponent::GetLifetimeReplicatedProps(TArray< FLifetimePropert
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UPotatoEatingComponent, _caloriesEaten);
+	DOREPLIFETIME(UPotatoEatingComponent, _currentScale);
 }
 
 void UPotatoEatingComponent::InitializeComponent()
@@ -71,7 +79,8 @@ void UPotatoEatingComponent::SetCaloriesEaten(float calories)
 	_caloriesEaten = calories;
 	if (old != _caloriesEaten)
 	{
-		OnCaloriesEatenChanged.Broadcast();
+		const float scale = 1.f + GetCaloriesEaten() * _caloryScale;
+		Authority_SetScale(scale);
 	}
 }
 
@@ -128,4 +137,29 @@ void UPotatoEatingComponent::Authority_EatHeldPotato()
 void UPotatoEatingComponent::Server_EatHeldPotato_Implementation()
 {
 	Authority_EatHeldPotato();
+}
+
+void UPotatoEatingComponent::Authority_SetScale(float scale)
+{
+	if (ensure(PotatoUtilities::HasAuthority(this)))
+	{
+		float oldScale = _currentScale;
+		_currentScale = scale;
+		Local_UpdateCurrentScale(oldScale);
+	}
+}
+
+void UPotatoEatingComponent::OnReplicate_CurrentScale(float oldScale)
+{
+	Local_UpdateCurrentScale(oldScale);
+}
+
+void UPotatoEatingComponent::Local_UpdateCurrentScale(float oldScale)
+{
+	AActor* owner = GetOwner();
+	if (ensure(IsValid(owner)))
+	{
+		owner->SetActorScale3D(FVector(_currentScale, _currentScale, _currentScale));
+		_springArmComponent->TargetArmLength = _initialSpringArmLenght * _currentScale;
+	}
 }
