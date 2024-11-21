@@ -30,10 +30,10 @@ void UPotatoEatingComponent::BeginPlay()
 			tagsComponent->AddTag(Character_Behaviour_PotatoEatingCapabale);
 		}
 
-		_springArmComponent = owner->FindComponentByClass<USpringArmComponent>();
-		if (IsValid(_springArmComponent))
+		USpringArmComponent* springArmComponent = owner->FindComponentByClass<USpringArmComponent>();
+		if (IsValid(springArmComponent))
 		{
-			_initialSpringArmLenght = _springArmComponent->TargetArmLength;
+			_initialSpringArmLenght = springArmComponent->TargetArmLength;
 		}
 	}
 }
@@ -82,11 +82,6 @@ void UPotatoEatingComponent::SetCaloriesEaten(float calories)
 		const float scale = 1.f + GetCaloriesEaten() * _caloryScale;
 		Authority_SetScale(scale);
 	}
-}
-
-void UPotatoEatingComponent::Server_EatPotato_Implementation(APotato* potato)
-{
-	Authority_EatPotato(potato);
 }
 
 void UPotatoEatingComponent::Authority_EatPotato(APotato* potato)
@@ -160,6 +155,11 @@ void UPotatoEatingComponent::Local_UpdateCurrentScale(float oldScale)
 	if (ensure(IsValid(owner)))
 	{
 		owner->SetActorScale3D(FVector(_currentScale, _currentScale, _currentScale));
-		_springArmComponent->TargetArmLength = _initialSpringArmLenght * _currentScale;
+
+		USpringArmComponent* springArmComponent = owner->FindComponentByClass<USpringArmComponent>();
+		if (IsValid(springArmComponent))
+		{
+			springArmComponent->TargetArmLength = _initialSpringArmLenght * _currentScale;
+		}
 	}
 }

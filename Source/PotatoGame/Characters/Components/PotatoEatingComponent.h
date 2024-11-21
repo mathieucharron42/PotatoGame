@@ -21,9 +21,6 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_EatHeldPotato();
 
-	UFUNCTION(Server, Reliable)
-	void Server_EatPotato(APotato* potato);
-
 	bool IsHungry() const;
 
 	float GetCaloriesNeeded() const;
@@ -61,7 +58,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float _caloryScale;
-
-	UPROPERTY(Transient)
-	USpringArmComponent* _springArmComponent;
 };

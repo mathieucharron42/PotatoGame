@@ -39,7 +39,7 @@ void UObstacleCrosserComponent::Activate(bool reset)
 	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 	if (ensure(IsValid(gameplayTagComponent)))
 	{
-		gameplayTagComponent->AddTag(Character_Behaviour_PotatoObstacleCrossing);
+		gameplayTagComponent->AddTag(Character_Behaviour_PotatoObstacleCrossingCapable);
 	}
 }
 
@@ -49,13 +49,13 @@ void UObstacleCrosserComponent::Deactivate()
 	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 	if (ensure(IsValid(gameplayTagComponent)))
 	{
-		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoObstacleCrossing);
+		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoObstacleCrossingCapable);
 	}
 }
 
 void UObstacleCrosserComponent::OnGameplayTagChanged(FGameplayTag tag, bool added)
 {
-	if (tag == Character_Behaviour_PotatoObstacleCrossing)
+	if (tag == Character_Behaviour_PotatoObstacleCrossingCapable)
 	{
 		const bool obastacleCrossingEnabled = added;
 		UpdateObastacleCrossing(obastacleCrossingEnabled);
