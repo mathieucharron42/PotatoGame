@@ -1,6 +1,6 @@
 #include "PotatoPickUpComponent.h"
 
-#include "PotatoGame/PotatoGame.h"
+#include "PotatoGame/PotatoGameplayTags.h"
 #include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
 #include "PotatoGame/Gameplay/GameplayTagComponent.h"
@@ -27,7 +27,7 @@ void UPotatoPickUpComponent::BeginPlay()
 		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
 		if (ensure(IsValid(tagsComponent)))
 		{
-			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoPickupCapabale);
+			tagsComponent->AddTag(Character_Behaviour_PotatoPickupCapabale);
 		}
 	}
 }
@@ -171,11 +171,11 @@ void UPotatoPickUpComponent::Authority_SetHeldPotato(APotato* potato)
 	{
 		if (_heldPotato)
 		{
-			gameplayTagComponent->GetContainer().AddTag(Character_Behaviour_State_HoldingPotato);
+			gameplayTagComponent->AddTag(Character_Behaviour_State_HoldingPotato);
 		}
 		else
 		{
-			gameplayTagComponent->GetContainer().RemoveTag(Character_Behaviour_State_HoldingPotato);
+			gameplayTagComponent->RemoveTag(Character_Behaviour_State_HoldingPotato);
 		}
 	}
 

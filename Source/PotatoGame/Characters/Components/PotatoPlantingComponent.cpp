@@ -1,6 +1,6 @@
 #include "PotatoPlantingComponent.h"
 
-#include "PotatoGame/PotatoGame.h"
+#include "PotatoGame/PotatoGameplayTags.h"
 #include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Gameplay/GameplayTagComponent.h"
 #include "PotatoGame/Gameplay/PotatoGameMode.h"
@@ -48,7 +48,7 @@ void UPotatoPlantingComponent::BeginPlay()
 		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
 		if (ensure(IsValid(tagsComponent)))
 		{
-			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoPlantingCapabale);
+			tagsComponent->AddTag(Character_Behaviour_PotatoPlantingCapabale);
 		}
 	}
 }

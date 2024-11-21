@@ -1,23 +1,68 @@
 #include "ObstacleCrosserComponent.h"
 
-#include "PotatoGame/PotatoGame.h"
 #include "PotatoGame/Gameplay/GameplayTagComponent.h"
+#include "PotatoGame/PotatoGameplayTags.h"
+#include "PotatoGame/Utils/PotatoUtilities.h"
 
 #include "Components/CapsuleComponent.h"
 
 UObstacleCrosserComponent::UObstacleCrosserComponent()
 {
 	bWantsInitializeComponent = true;
+	bAutoActivate = true;
 	SetIsReplicatedByDefault(true);
 }
 
-void UObstacleCrosserComponent::BeginPlay()
+void UObstacleCrosserComponent::InitializeComponent()
 {
-	Super::BeginPlay();
-	AllowObastacleCrossing();
+	Super::InitializeComponent();
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (IsValid(gameplayTagComponent))
+	{
+		gameplayTagComponent->GameplayTagChanged.AddUObject(this, &UObstacleCrosserComponent::OnGameplayTagChanged);
+	}
 }
 
-void UObstacleCrosserComponent::AllowObastacleCrossing()
+void UObstacleCrosserComponent::UninitializeComponent()
+{
+	Super::UninitializeComponent();
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (IsValid(gameplayTagComponent))
+	{
+		gameplayTagComponent->GameplayTagChanged.RemoveAll(this);
+	}
+}
+
+void UObstacleCrosserComponent::Activate(bool reset)
+{
+	Super::Activate(reset);
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (ensure(IsValid(gameplayTagComponent)))
+	{
+		gameplayTagComponent->AddTag(Character_Behaviour_PotatoObstacleCrossing);
+	}
+}
+
+void UObstacleCrosserComponent::Deactivate() 
+{
+	Super::Deactivate();
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (ensure(IsValid(gameplayTagComponent)))
+	{
+		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoObstacleCrossing);
+	}
+}
+
+void UObstacleCrosserComponent::OnGameplayTagChanged(FGameplayTag tag, bool added)
+{
+	if (tag == Character_Behaviour_PotatoObstacleCrossing)
+	{
+		const bool obastacleCrossingEnabled = added;
+		UpdateObastacleCrossing(obastacleCrossingEnabled);
+	}
+}
+
+void UObstacleCrosserComponent::UpdateObastacleCrossing(bool enabled)
 {
 	AActor* owner = GetOwner();
 	if (IsValid(owner))
@@ -25,13 +70,8 @@ void UObstacleCrosserComponent::AllowObastacleCrossing()
 		UPrimitiveComponent* primitiveComponent = Cast<UPrimitiveComponent>(owner->GetRootComponent());
 		if (IsValid(primitiveComponent))
 		{
-			primitiveComponent->SetCollisionResponseToChannel(_allowedCollisionChannel, ECollisionResponse::ECR_Ignore);
-		}
-
-		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
-		if (ensure(IsValid(tagsComponent)))
-		{
-			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoObstacleCrossing);
+			ECollisionResponse response = enabled ? ECollisionResponse::ECR_Ignore : ECollisionResponse::ECR_Block;
+			primitiveComponent->SetCollisionResponseToChannel(_allowedCollisionChannel, response);
 		}
 	}
 }

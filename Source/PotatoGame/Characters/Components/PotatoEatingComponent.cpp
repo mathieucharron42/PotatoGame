@@ -1,6 +1,6 @@
 #include "PotatoEatingComponent.h"
 
-#include "PotatoGame/PotatoGame.h"
+#include "PotatoGame/PotatoGameplayTags.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
 #include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
 #include "PotatoGame/Crops/Potato.h"
@@ -27,7 +27,7 @@ void UPotatoEatingComponent::BeginPlay()
 		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
 		if (ensure(IsValid(tagsComponent)))
 		{
-			tagsComponent->GetContainer().AddTag(Character_Behaviour_PotatoEatingCapabale);
+			tagsComponent->AddTag(Character_Behaviour_PotatoEatingCapabale);
 		}
 
 		_springArmComponent = owner->FindComponentByClass<USpringArmComponent>();

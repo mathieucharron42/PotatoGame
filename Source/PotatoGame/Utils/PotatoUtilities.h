@@ -1,3 +1,4 @@
+
 #pragma once
 
 DECLARE_LOG_CATEGORY_EXTERN(LogGlobal, Log, All);

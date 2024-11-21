@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 #include "Containers/EnumAsByte.h"
+#include "NativeGameplayTags.h"
 
 #include "ObstacleCrosserComponent.generated.h"
 
@@ -17,10 +18,15 @@ class POTATOGAME_API UObstacleCrosserComponent : public USceneComponent
 public:	
 	UObstacleCrosserComponent();
 
-	virtual void BeginPlay() override;
+	virtual void InitializeComponent() override;
+	virtual void UninitializeComponent() override;
+
+	virtual void Activate(bool bReset) override;
+	virtual void Deactivate() override;
 
 private:
-	void AllowObastacleCrossing();
+	void OnGameplayTagChanged(FGameplayTag tag, bool added);
+	void UpdateObastacleCrossing(bool enabled);
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<ECollisionChannel> _allowedCollisionChannel;
