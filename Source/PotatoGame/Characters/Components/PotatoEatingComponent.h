@@ -28,7 +28,11 @@ public:
 	float GetCaloriesEaten() const;
 
 private:
+	virtual void Activate(bool reset) override;
+	virtual void Deactivate() override;
+
 	virtual void BeginPlay() override;
+
 	virtual void InitializeComponent() override;
 	virtual void UninitializeComponent() override;
 

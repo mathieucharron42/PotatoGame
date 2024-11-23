@@ -14,7 +14,30 @@
 UPotatoEatingComponent::UPotatoEatingComponent()
 {
 	bWantsInitializeComponent = true;
+	bAutoActivate = true;
 	SetIsReplicatedByDefault(true);
+}
+
+void UPotatoEatingComponent::Activate(bool reset)
+{
+	Super::Activate(reset);
+
+	UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (ensure(IsValid(tagsComponent)))
+	{
+		tagsComponent->AddTag(Character_Behaviour_PotatoEatingCapabale);
+	}
+}
+
+void UPotatoEatingComponent::Deactivate()
+{
+	Super::Deactivate();
+
+	UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (ensure(IsValid(tagsComponent)))
+	{
+		tagsComponent->RemoveTag(Character_Behaviour_PotatoEatingCapabale);
+	}
 }
 
 void UPotatoEatingComponent::BeginPlay()
@@ -24,12 +47,6 @@ void UPotatoEatingComponent::BeginPlay()
 	AActor* owner = Cast<AActor>(GetOwner());
 	if (ensure(IsValid(owner)))
 	{
-		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
-		if (ensure(IsValid(tagsComponent)))
-		{
-			tagsComponent->AddTag(Character_Behaviour_PotatoEatingCapabale);
-		}
-
 		USpringArmComponent* springArmComponent = owner->FindComponentByClass<USpringArmComponent>();
 		if (IsValid(springArmComponent))
 		{

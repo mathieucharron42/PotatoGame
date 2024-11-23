@@ -42,7 +42,7 @@ void UPotatoPickUpComponent::Deactivate()
 	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 	if (IsValid(gameplayTagComponent))
 	{
-		gameplayTagComponent->AddTag(Character_Behaviour_PotatoPickupCapabale);
+		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoPickupCapabale);
 	}
 }
 
