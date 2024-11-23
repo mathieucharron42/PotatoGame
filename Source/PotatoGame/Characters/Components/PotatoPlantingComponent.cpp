@@ -28,28 +28,29 @@ static TAutoConsoleVariable<float> CVarPotatoPlantRate(
 UPotatoPlantingComponent::UPotatoPlantingComponent()
 {
 	bWantsInitializeComponent = true;
+	bAutoActivate = true;
 	PrimaryComponentTick.bCanEverTick = true;
 	SetIsReplicatedByDefault(true);
 }
 
-void UPotatoPlantingComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+
+void UPotatoPlantingComponent::Activate(bool reset)
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UPotatoPlantingComponent, _plantingCooldown);
+	Super::Activate(reset);
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (ensure(IsValid(gameplayTagComponent)))
+	{
+		gameplayTagComponent->AddTag(Character_Behaviour_PotatoPlantingCapabale);
+	}
 }
 
-void UPotatoPlantingComponent::BeginPlay()
+void UPotatoPlantingComponent::Deactivate()
 {
-	Super::BeginPlay();
-	
-	AActor* owner = Cast<AActor>(GetOwner());
-	if (ensure(IsValid(owner)))
+	Super::Deactivate();
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (ensure(IsValid(gameplayTagComponent)))
 	{
-		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
-		if (ensure(IsValid(tagsComponent)))
-		{
-			tagsComponent->AddTag(Character_Behaviour_PotatoPlantingCapabale);
-		}
+		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoPlantingCapabale);
 	}
 }
 
@@ -60,18 +61,6 @@ void UPotatoPlantingComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	ACharacter* owner = Cast<ACharacter>(GetOwner());
 	if (ensure(IsValid(owner)))
 	{
-		if (owner->HasAuthority())
-		{
-			if (_plantingCooldown >= 0)
-			{
-				_plantingCooldown -= DeltaTime;
-				if (_plantingCooldown <= 0)
-				{
-					_plantingCooldown = 0;
-				}
-			}
-		}
-
 		if (owner->IsLocallyControlled())
 		{
 			if (CVarPotatoAutoPlantPotato.GetValueOnAnyThread())
@@ -80,6 +69,19 @@ void UPotatoPlantingComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 			}
 		}
 	}
+}
+
+bool UPotatoPlantingComponent::CanPlantPotato() const
+{
+	bool canPlantPotato = false;
+
+	const UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (IsValid(gameplayTagComponent))
+	{
+		canPlantPotato = !gameplayTagComponent->HasTag(Character_Behaviour_State_PotatoPlantingCooldown);
+	}
+
+	return canPlantPotato;
 }
 
 void UPotatoPlantingComponent::Authority_PlantPotato()
@@ -114,7 +116,12 @@ void UPotatoPlantingComponent::Authority_PlantPotato()
 							UE_LOG(LogPotato, Log, TEXT("Spawned potato %s by %s at %s"), *newPotato->GetName(), *owner->GetName(), *owner->GetTransform().ToString());
 
 							const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0? CVarPotatoPlantRate.GetValueOnGameThread() : _plantingRate;
-							_plantingCooldown = effectivePlantRate;
+
+							UGameplayTagComponent* gameplayTagComponent = owner->GetComponentByClass<UGameplayTagComponent>();
+							if (ensure(IsValid(gameplayTagComponent)))
+							{
+								gameplayTagComponent->AddTag(Character_Behaviour_State_PotatoPlantingCooldown, effectivePlantRate);
+							}
 						}
 					}
 				} 

@@ -1,9 +1,17 @@
 #include "GameplayTagComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 UGameplayTagComponent::UGameplayTagComponent()
 {
 	bWantsInitializeComponent = true;
 	SetIsReplicatedByDefault(true);
+}
+
+void UGameplayTagComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UGameplayTagComponent, _gameplayTagContainer);
 }
 
 void UGameplayTagComponent::BeginPlay()
@@ -33,12 +41,41 @@ void UGameplayTagComponent::GetOwnedGameplayTags(FGameplayTagContainer& TagConta
 
 void UGameplayTagComponent::AddTag(FGameplayTag tag)
 {
+	bool added = _gameplayTagContainer.HasTagExact(tag);
 	_gameplayTagContainer.AddTag(tag);
-	GameplayTagChanged.Broadcast(tag, true);
+	if (added)
+	{
+		GameplayTagChanged.Broadcast(tag, true);
+	}
+}
+
+void UGameplayTagComponent::AddTag(FGameplayTag tag, float expiration)
+{
+	AddTag(tag);
+	if (ensure(GetWorld()))
+	{
+		FTimerHandle handle;
+		GetWorld()->GetTimerManager().SetTimer(handle, FTimerDelegate::CreateUObject(this,& UGameplayTagComponent::OnTagExpired, tag), expiration, false);
+		_tagExpirations.Add(tag, handle);
+	}
 }
 
 void UGameplayTagComponent::RemoveTag(FGameplayTag tag)
 {
-	_gameplayTagContainer.RemoveTag(tag);
-	GameplayTagChanged.Broadcast(tag, false);
+	bool removed = _gameplayTagContainer.RemoveTag(tag);
+	if (removed)
+	{
+		GameplayTagChanged.Broadcast(tag, false);
+	}
+}
+
+bool UGameplayTagComponent::HasTag(FGameplayTag tag) const
+{
+	return _gameplayTagContainer.HasTag(tag);
+}
+
+void UGameplayTagComponent::OnTagExpired(FGameplayTag tag)
+{
+	_tagExpirations.Remove(tag);
+	RemoveTag(tag);
 }

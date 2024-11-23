@@ -10,6 +10,7 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Behaviour_PotatoEatingCapabale);
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Behaviour_PotatoObstacleCrossingCapable);
 
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Behaviour_State_HoldingPotato);
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Behaviour_State_PotatoPlantingCooldown);
 
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_Behaviour_PotatoRainable);
 

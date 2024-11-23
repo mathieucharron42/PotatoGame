@@ -28,7 +28,9 @@ public:
 	APotato* Authority_DropPotato();
 
 private:
-	virtual void BeginPlay() override;
+	virtual void Activate(bool reset) override;
+	virtual void Deactivate() override;
+
 	virtual void InitializeComponent() override;
 	virtual void UninitializeComponent() override;
 
@@ -49,9 +51,6 @@ private:
 
 	UPROPERTY(Transient, Replicated, ReplicatedUsing = OnReplicate_HeldPotato)
 	APotato* _heldPotato = nullptr;
-
-	UPROPERTY(Transient)
-	USkeletalMeshComponent* _characterMeshComponent = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	FName _heldSocketName = FName("socket_hand_r");

@@ -14,22 +14,8 @@
 UPotatoPickUpComponent::UPotatoPickUpComponent()
 {
 	bWantsInitializeComponent = true;
+	bAutoActivate = true;
 	SetIsReplicatedByDefault(true);
-}
-
-void UPotatoPickUpComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	AActor* owner = Cast<AActor>(GetOwner());
-	if (ensure(IsValid(owner)))
-	{
-		UGameplayTagComponent* tagsComponent = owner->GetComponentByClass<UGameplayTagComponent>();
-		if (ensure(IsValid(tagsComponent)))
-		{
-			tagsComponent->AddTag(Character_Behaviour_PotatoPickupCapabale);
-		}
-	}
 }
 
 void UPotatoPickUpComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -38,13 +24,34 @@ void UPotatoPickUpComponent::GetLifetimeReplicatedProps(TArray< FLifetimePropert
 	DOREPLIFETIME(UPotatoPickUpComponent, _heldPotato);
 }
 
+void UPotatoPickUpComponent::Activate(bool reset)
+{
+	Super::Activate();
+
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (IsValid(gameplayTagComponent))
+	{
+		gameplayTagComponent->AddTag(Character_Behaviour_PotatoPickupCapabale);
+	}
+}
+
+void UPotatoPickUpComponent::Deactivate()
+{
+	Super::Deactivate();
+
+	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+	if (IsValid(gameplayTagComponent))
+	{
+		gameplayTagComponent->AddTag(Character_Behaviour_PotatoPickupCapabale);
+	}
+}
+
 void UPotatoPickUpComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 	APotatoBaseCharacter* owner = Cast<APotatoBaseCharacter>(GetOwner());
 	if (ensure(IsValid(owner)))
 	{
-		_characterMeshComponent = owner->FindComponentByClass<USkeletalMeshComponent>();
 		owner->OnActorBeginOverlap.AddDynamic(this, &UPotatoPickUpComponent::OnOwnerOverlap);
 		owner->OnActorHit.AddDynamic(this, &UPotatoPickUpComponent::OnOwnerHit);
 		owner->OnSetupPlayerInput.AddUObject(this, &UPotatoPickUpComponent::OnSetupPlayerInput);
@@ -195,7 +202,8 @@ void UPotatoPickUpComponent::OnUpdate_HeldPotato(APotato* old)
 		FAttachmentTransformRules attachementRules = FAttachmentTransformRules::SnapToTargetIncludingScale;
 		attachementRules.bWeldSimulatedBodies = true;
 		attachementRules.ScaleRule = EAttachmentRule::KeepRelative;
-		targetComponent->AttachToComponent(_characterMeshComponent, attachementRules, _heldSocketName);
+		USkeletalMeshComponent* characterMeshComponent = PotatoUtilities::GetComponentByClass<USkeletalMeshComponent>(this);
+		targetComponent->AttachToComponent(characterMeshComponent, attachementRules, _heldSocketName);
 	}
 	else if (IsValid(old))
 	{

@@ -18,10 +18,12 @@ public:
 	void Server_PlantPotato();
 
 	UFUNCTION(BlueprintCallable)
-	bool CanPlantPotato() const { return _plantingCooldown <= 0; }
+	bool CanPlantPotato() const;
 
 private:
-	virtual void BeginPlay() override;
+	virtual void Activate(bool reset) override;
+	virtual void Deactivate() override;
+
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void InitializeComponent() override;
@@ -39,7 +41,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float _plantingRate;
-
-	UPROPERTY(Transient, Replicated)
-	float _plantingCooldown = 0;
 };

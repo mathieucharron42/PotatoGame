@@ -31,9 +31,18 @@ public:
 
 	void AddTag(FGameplayTag tag);
 
+	void AddTag(FGameplayTag tag, float expiration);
+
 	void RemoveTag(FGameplayTag tag);
 
+	bool HasTag(FGameplayTag tag) const;
+
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	FGameplayTagContainer _gameplayTagContainer;
+
+private:
+	void OnTagExpired(FGameplayTag tag);
+
+	TMap<FGameplayTag, FTimerHandle> _tagExpirations;
 };

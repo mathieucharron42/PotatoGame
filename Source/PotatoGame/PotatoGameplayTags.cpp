@@ -7,6 +7,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoEatingCapabale, "Charac
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoObstacleCrossingCapable, "Character.Behaviour.PotatoObstacleCrossingCapable", "Able to cross obstacles");
 
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_State_HoldingPotato, "Character.Behaviour.State.HoldingPotato", "Whether is currently holding potato");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_State_PotatoPlantingCooldown, "Character.Behaviour.State.PotatoPlantingCooldown", "Whether potato planting is cooling down");
 
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cheat_Behaviour_PotatoRainable, "Cheat.Behaviour.PotatoRainable", "Able to rain potato");
 
