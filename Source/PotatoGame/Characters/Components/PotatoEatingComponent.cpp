@@ -1,6 +1,7 @@
 #include "PotatoEatingComponent.h"
 
 #include "PotatoGame/PotatoGameplayTags.h"
+#include "PotatoGame/PotatoLogs.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
 #include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
 #include "PotatoGame/Crops/Potato.h"

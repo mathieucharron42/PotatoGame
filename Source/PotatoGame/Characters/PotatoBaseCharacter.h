@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "GameplayTagAssetInterface.h"
 #include "GameplayTagContainer.h"
@@ -11,10 +12,11 @@
 
 #include "PotatoBaseCharacter.generated.h"
 
+class UAbilitySystemComponent;
 struct FNavigationQueryFilte;
 
 UCLASS(Abstract, config=Game)
-class APotatoBaseCharacter : public ACharacter, public IGameplayTagAssetInterface
+class APotatoBaseCharacter : public ACharacter, public IGameplayTagAssetInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -28,6 +30,9 @@ class APotatoBaseCharacter : public ACharacter, public IGameplayTagAssetInterfac
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UGameplayTagComponent* GameplayTag;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	UAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UNavigationQueryFilter> _navigationQueryFilter;
@@ -90,6 +95,10 @@ private:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	virtual void PossessedBy(AController* NewController) override;
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

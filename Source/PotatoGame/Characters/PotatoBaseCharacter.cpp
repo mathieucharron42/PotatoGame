@@ -5,6 +5,7 @@
 #include "PotatoGame/Gameplay/GameplayTagComponent.h"
 
 //#include "HeadMountedDisplayFunctionLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -44,6 +45,9 @@ APotatoBaseCharacter::APotatoBaseCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	GameplayTag = CreateDefaultSubobject<UGameplayTagComponent>(TEXT("GameplayTag"));
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -127,4 +131,15 @@ void APotatoBaseCharacter::MoveRight(float Value)
 void APotatoBaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
 	GameplayTag->GetOwnedGameplayTags(TagContainer);
+}
+
+UAbilitySystemComponent* APotatoBaseCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+void APotatoBaseCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }

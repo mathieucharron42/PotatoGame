@@ -1,9 +1,8 @@
-#include "PotatoGame/Utils/PotatoUtilities.h"
+#include "PotatoUtilities.h"
+
+#include "PotatoGame/PotatoLogs.h"
 
 #include "UObject/NoExportTypes.h"
-
-DEFINE_LOG_CATEGORY(LogGlobal);
-DEFINE_LOG_CATEGORY(LogPotato);
 
 static TAutoConsoleVariable<int32> CVarWasteTime(
 	TEXT("potato.WasteTime"),

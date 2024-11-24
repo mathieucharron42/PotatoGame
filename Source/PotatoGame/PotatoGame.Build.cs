@@ -8,7 +8,7 @@ public class PotatoGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "AIModule", "Core", "CoreUObject", "Engine", "GameplayTags", "InputCore", "HeadMountedDisplay", "NavigationSystem" });
+		PublicDependencyModuleNames.AddRange(new string[] { "AIModule", "Core", "CoreUObject", "Engine", "GameplayAbilities", "GameplayTags", "GameplayTasks", "InputCore", "HeadMountedDisplay", "NavigationSystem" });
 
         if (Target.Type == TargetType.Editor)
         {

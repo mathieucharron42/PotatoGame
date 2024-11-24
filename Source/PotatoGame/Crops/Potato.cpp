@@ -1,5 +1,6 @@
 #include "Potato.h"
 
+#include "PotatoGame/PotatoLogs.h"
 #include "PotatoGame/Crops/PotatoManagerSubsystem.h"
 #include "PotatoGame/Utils/PotatoUtilities.h"
 

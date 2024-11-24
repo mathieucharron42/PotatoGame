@@ -1,5 +1,6 @@
 #include "PotatoCheatManager.h"
 
+#include "PotatoGame/PotatoLogs.h"
 #include "PotatoGame/Blockers/ForceField.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
 #include "PotatoGame/Characters/Components/PotatoPickupBaseComponent.h"
