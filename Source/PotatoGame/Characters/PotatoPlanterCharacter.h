@@ -7,8 +7,8 @@
 
 #include "PotatoPlanterCharacter.generated.h"
 
-class UPotatoPlantingComponent;
-class UPotatoPickUpComponent;
+class UPotatoPlantingBaseComponent;
+class UPotatoPickUpBaseComponent;
 
 UCLASS(Abstract)
 class POTATOGAME_API APotatoPlanterCharacter : public APotatoBaseCharacter
@@ -21,8 +21,8 @@ private:
 	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPlantingComponent> _potatoPlantingComponentClass;
+	TSubclassOf<UPotatoPlantingBaseComponent> _potatoPlantingComponentClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPickUpComponent> _potatoPickupComponentClass;
+	TSubclassOf<UPotatoPickUpBaseComponent> _potatoPickupComponentClass;
 };

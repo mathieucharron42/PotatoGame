@@ -1,8 +1,8 @@
 #include "PotatoPlanterCharacter.h"
 
 #include "PotatoGame/Gameplay/PotatoGameMode.h"
-#include "PotatoGame/Characters/Components/PotatoPlantingComponent.h"
-#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPlantingBaseComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpBaseComponent.h"
 
 #include "Components/InputComponent.h"
 #include "GameplayTagContainer.h"
@@ -13,7 +13,7 @@ void APotatoPlanterCharacter::PostInitializeComponents()
 
 	if (HasAuthority())
 	{
-		SpawnComponent<UPotatoPlantingComponent>(_potatoPlantingComponentClass);
-		SpawnComponent<UPotatoPickUpComponent>(_potatoPickupComponentClass);
+		SpawnComponent<UPotatoPlantingBaseComponent>(_potatoPlantingComponentClass);
+		SpawnComponent<UPotatoPickUpBaseComponent>(_potatoPickupComponentClass);
 	}
 }

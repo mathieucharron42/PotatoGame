@@ -138,7 +138,7 @@ void UPotatoEatingComponent::Authority_EatHeldPotato()
 {
 	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		UPotatoPickUpComponent* _potatoPickUpComponent = PotatoUtilities::GetComponentByClass<UPotatoPickUpComponent>(this);
+		UPotatoPickUpBaseComponent* _potatoPickUpComponent = PotatoUtilities::GetComponentByClass<UPotatoPickUpBaseComponent>(this);
 		if (ensure(IsValid(_potatoPickUpComponent)))
 		{
 			if (_potatoPickUpComponent->IsHoldingPotato())

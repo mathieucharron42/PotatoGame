@@ -6,8 +6,8 @@
 
 #include "PotatoGathererCharacter.generated.h"
 
-class UPotatoPickUpComponent;
-class UObstacleCrosserComponent;
+class UPotatoPickUpBaseComponent;
+class UObstacleCrosserBaseComponent;
 
 UCLASS(Abstract)
 class POTATOGAME_API APotatoGathererCharacter : public APotatoBaseCharacter
@@ -19,8 +19,8 @@ private:
 	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPickUpComponent> _potatoPickupComponentClass;
+	TSubclassOf<UPotatoPickUpBaseComponent> _potatoPickupComponentClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UObstacleCrosserComponent> _obstacleCrosserComponentClass;
+	TSubclassOf<UObstacleCrosserBaseComponent> _obstacleCrosserComponentClass;
 };

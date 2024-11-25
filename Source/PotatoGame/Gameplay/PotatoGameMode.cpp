@@ -1,7 +1,7 @@
 #include "PotatoGameMode.h"
 
 #include "PotatoGame/Characters/PotatoEaterCharacter.h"
-#include "PotatoGame/Characters/Components/PotatoEatingComponent.h"
+#include "PotatoGame/Characters/Components/PotatoEatingBaseComponent.h"
 #include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Gameplay/PotatoGameRole.h"
 #include "PotatoGame/Gameplay/PotatoGameState.h"
@@ -51,13 +51,13 @@ void APotatoGameMode::CheckGameEnded()
 	UWorld* world = GetWorld();
 	if (ensure(IsValid(world)))
 	{
-		TArray<UPotatoEatingComponent*> eatingComponents;
+		TArray<UPotatoEatingBaseComponent*> eatingComponents;
 		for (TActorIterator<APotatoBaseCharacter> it(world); it; ++it)
 		{
 			AActor* actor = *it;
 			if (IsValid(actor))
 			{
-				UPotatoEatingComponent* component = it->FindComponentByClass<UPotatoEatingComponent>();
+				UPotatoEatingBaseComponent* component = it->FindComponentByClass<UPotatoEatingBaseComponent>();
 				if (IsValid(component))
 				{
 					eatingComponents.Add(component);
@@ -65,7 +65,7 @@ void APotatoGameMode::CheckGameEnded()
 			}
 		}
 
-		const bool arePotatoEatersWellFeed = Algo::AllOf(eatingComponents, [](UPotatoEatingComponent* eatingComponent)
+		const bool arePotatoEatersWellFeed = Algo::AllOf(eatingComponents, [](UPotatoEatingBaseComponent* eatingComponent)
 		{
 			return !eatingComponent->IsHungry();
 		});

@@ -2,32 +2,32 @@
 
 #pragma once
 
+#include "PotatoGame/Characters/Components/PotatoEatingBaseComponent.h"
+
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PotatoEatingComponent.generated.h"
 
 class APotato;
 class USpringArmComponent;
-class UPotatoPickUpComponent;
 
 UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
-class POTATOGAME_API UPotatoEatingComponent : public USceneComponent
+class POTATOGAME_API UPotatoEatingComponent : public UPotatoEatingBaseComponent
 {
 	GENERATED_BODY()
 
 public:		
 	UPotatoEatingComponent();
 
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_EatHeldPotato();
+	virtual bool IsHungry() const override;
 
-	bool IsHungry() const;
+	virtual float GetCaloriesNeeded() const override;
 
-	float GetCaloriesNeeded() const;
-
-	float GetCaloriesEaten() const;
+	virtual float GetCaloriesEaten() const override;
 
 private:
+	virtual void Server_EatHeldPotato_Implementation() override;
+
 	virtual void Activate(bool reset) override;
 	virtual void Deactivate() override;
 
@@ -48,9 +48,6 @@ private:
 	void OnReplicate_CurrentScale(float oldScale);
 	void Local_UpdateCurrentScale(float oldScale);
 
-	UPROPERTY(EditAnywhere)
-	float _caloriesNeeded;
-
 	UPROPERTY(Transient, Replicated)
 	float _caloriesEaten;
 
@@ -59,7 +56,4 @@ private:
 
 	UPROPERTY(Transient)
 	int32 _initialSpringArmLenght;
-
-	UPROPERTY(EditAnywhere)
-	float _caloryScale;
 };

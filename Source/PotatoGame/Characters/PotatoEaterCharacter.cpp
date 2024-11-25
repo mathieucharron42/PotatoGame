@@ -1,7 +1,7 @@
 #include "PotatoEaterCharacter.h"
 
-#include "PotatoGame/Characters/Components/PotatoEatingComponent.h"
-#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
+#include "PotatoGame/Characters/Components/PotatoEatingBaseComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpBaseComponent.h"
 
 #include "GameFramework/SpringArmComponent.h"
 
@@ -13,7 +13,7 @@ void APotatoEaterCharacter::PostInitializeComponents()
 
 	if (HasAuthority())
 	{
-		SpawnComponent<UPotatoPickUpComponent>(_potatoPickupComponentClass);
-		SpawnComponent<UPotatoEatingComponent>(_potatoEatingComponentClass);
+		SpawnComponent<UPotatoPickUpBaseComponent>(_potatoPickupComponentClass);
+		SpawnComponent<UPotatoEatingBaseComponent>(_potatoEatingComponentClass);
 	}
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PotatoGame/Characters/Components/PotatoPlantingBaseComponent.h"
+
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 
@@ -7,20 +9,18 @@
 
 
 UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
-class POTATOGAME_API UPotatoPlantingComponent : public USceneComponent
+class POTATOGAME_API UPotatoPlantingComponent : public UPotatoPlantingBaseComponent
 {
 	GENERATED_BODY()
 
 public:	
 	UPotatoPlantingComponent();
 
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_PlantPotato();
-
-	UFUNCTION(BlueprintCallable)
-	bool CanPlantPotato() const;
+	virtual bool CanPlantPotato() const override;
 
 private:
+	virtual void Server_PlantPotato_Implementation() override;
+
 	virtual void Activate(bool reset) override;
 	virtual void Deactivate() override;
 
@@ -32,13 +32,4 @@ private:
 	void Authority_PlantPotato();
 
 	void OnSetupPlayerInput(UInputComponent* inputComponent);
-
-	UPROPERTY(EditAnywhere)
-	FName _spawnSocketName = FName("socket_spawn");
-
-	UPROPERTY(EditAnywhere)
-	float _spawnVelocity;
-
-	UPROPERTY(EditAnywhere)
-	float _plantingRate;
 };

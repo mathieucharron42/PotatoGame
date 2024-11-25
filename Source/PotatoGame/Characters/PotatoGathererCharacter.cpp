@@ -1,7 +1,7 @@
 #include "PotatoGathererCharacter.h"
 
-#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
-#include "PotatoGame/Characters/Components/ObstacleCrosserComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpBaseComponent.h"
+#include "PotatoGame/Characters/Components/ObstacleCrosserBaseComponent.h"
 
 void APotatoGathererCharacter::PostInitializeComponents()
 {
@@ -9,7 +9,7 @@ void APotatoGathererCharacter::PostInitializeComponents()
 
 	if (HasAuthority())
 	{
-		SpawnComponent<UPotatoPickUpComponent>(_potatoPickupComponentClass);
-		SpawnComponent<UObstacleCrosserComponent>(_obstacleCrosserComponentClass);
+		SpawnComponent<UPotatoPickUpBaseComponent>(_potatoPickupComponentClass);
+		SpawnComponent<UObstacleCrosserBaseComponent>(_obstacleCrosserComponentClass);
 	}
 }

@@ -6,8 +6,8 @@
 
 #include "PotatoEaterCharacter.generated.h"
 
-class UPotatoEatingComponent;
-class UPotatoPickUpComponent;
+class UPotatoEatingBaseComponent;
+class UPotatoPickUpBaseComponent;
 class USpringArmComponent;
 
 UCLASS()
@@ -21,8 +21,8 @@ private:
 	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPickUpComponent> _potatoPickupComponentClass;
+	TSubclassOf<UPotatoPickUpBaseComponent> _potatoPickupComponentClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoEatingComponent> _potatoEatingComponentClass;
+	TSubclassOf<UPotatoEatingBaseComponent> _potatoEatingComponentClass;
 };

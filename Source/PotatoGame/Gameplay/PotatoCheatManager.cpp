@@ -2,7 +2,7 @@
 
 #include "PotatoGame/Blockers/ForceField.h"
 #include "PotatoGame/Characters/PotatoBaseCharacter.h"
-#include "PotatoGame/Characters/Components/PotatoPickupComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickupBaseComponent.h"
 #include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Crops/PotatoManagerSubsystem.h"
 #include "PotatoGame/Gameplay/PotatoPlayerController.h"
@@ -183,7 +183,7 @@ void UPotatoCheatManager::Potato_UseTheForce()
 									APotatoBaseCharacter* character = *actorItr;
 									if (character != currentCharacter)
 									{
-										UPotatoPickUpComponent* pickupComponent = character->FindComponentByClass<UPotatoPickUpComponent>();
+										UPotatoPickUpBaseComponent* pickupComponent = character->FindComponentByClass<UPotatoPickUpBaseComponent>();
 										if (pickupComponent->IsHoldingPotato(potato))
 										{
 											pickupComponent->Authority_DropPotato();
@@ -192,7 +192,7 @@ void UPotatoCheatManager::Potato_UseTheForce()
 								}
 							
 								// Grab potato by current character
-								UPotatoPickUpComponent* pickupComponent = currentCharacter->FindComponentByClass<UPotatoPickUpComponent>();
+								UPotatoPickUpBaseComponent* pickupComponent = currentCharacter->FindComponentByClass<UPotatoPickUpBaseComponent>();
 								if (ensure(IsValid(pickupComponent)))
 								{
 									pickupComponent->Authority_PickupPotato(potato);
