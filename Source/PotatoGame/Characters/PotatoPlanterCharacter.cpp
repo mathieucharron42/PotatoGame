@@ -7,12 +7,13 @@
 #include "Components/InputComponent.h"
 #include "GameplayTagContainer.h"
 
-
-APotatoPlanterCharacter::APotatoPlanterCharacter()
+void APotatoPlanterCharacter::PostInitializeComponents()
 {
-	_potatoPlantingComponent = CreateDefaultSubobject<UPotatoPlantingComponent>(TEXT("UPotatoPlantComponent"));
-	_potatoPlantingComponent->SetupAttachment(RootComponent);
+	Super::PostInitializeComponents();
 
-	_potatoPickUpComponent = CreateDefaultSubobject<UPotatoPickUpComponent>(TEXT("PotatoPickUpComponent"));
-	_potatoPickUpComponent->SetupAttachment(RootComponent);
+	if (HasAuthority())
+	{
+		SpawnComponent<UPotatoPlantingComponent>(_potatoPlantingComponentClass);
+		SpawnComponent<UPotatoPickUpComponent>(_potatoPickupComponentClass);
+	}
 }

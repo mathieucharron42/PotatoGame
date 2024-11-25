@@ -19,7 +19,7 @@ void UObstacleCrosserComponent::InitializeComponent()
 	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 	if (IsValid(gameplayTagComponent))
 	{
-		gameplayTagComponent->GameplayTagChanged.AddUObject(this, &UObstacleCrosserComponent::OnGameplayTagChanged);
+		_tagChangedHandle = gameplayTagComponent->RegisterAndNotifyTagChange(FGameplayTagChanged::FDelegate::CreateUObject(this, &UObstacleCrosserComponent::OnGameplayTagChanged));
 	}
 }
 
@@ -29,27 +29,33 @@ void UObstacleCrosserComponent::UninitializeComponent()
 	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 	if (IsValid(gameplayTagComponent))
 	{
-		gameplayTagComponent->GameplayTagChanged.RemoveAll(this);
+		gameplayTagComponent->UnregisterTagChange(_tagChangedHandle);
 	}
 }
 
 void UObstacleCrosserComponent::Activate(bool reset)
 {
 	Super::Activate(reset);
-	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (ensure(IsValid(gameplayTagComponent)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		gameplayTagComponent->AddTag(Character_Behaviour_PotatoObstacleCrossingCapable);
+		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (ensure(IsValid(gameplayTagComponent)))
+		{
+			gameplayTagComponent->Authority_AddTag(Character_Behaviour_PotatoObstacleCrossingCapable);
+		}
 	}
 }
 
 void UObstacleCrosserComponent::Deactivate() 
 {
 	Super::Deactivate();
-	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (ensure(IsValid(gameplayTagComponent)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoObstacleCrossingCapable);
+		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (ensure(IsValid(gameplayTagComponent)))
+		{
+			gameplayTagComponent->Authority_RemoveTag(Character_Behaviour_PotatoObstacleCrossingCapable);
+		}
 	}
 }
 

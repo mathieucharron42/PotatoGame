@@ -3,11 +3,13 @@
 #include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
 #include "PotatoGame/Characters/Components/ObstacleCrosserComponent.h"
 
-APotatoGathererCharacter::APotatoGathererCharacter()
+void APotatoGathererCharacter::PostInitializeComponents()
 {
-	_potatoPickUpComponent = CreateDefaultSubobject<UPotatoPickUpComponent>(TEXT("PotatoPickUpComponent"));
-	_potatoPickUpComponent->SetupAttachment(RootComponent);
+	Super::PostInitializeComponents();
 
-	_obstacleCrosserComponent = CreateDefaultSubobject<UObstacleCrosserComponent>(TEXT("ObstacleCrosserComponent"));
-	_obstacleCrosserComponent->SetupAttachment(RootComponent);
+	if (HasAuthority())
+	{
+		SpawnComponent<UPotatoPickUpComponent>(_potatoPickupComponentClass);
+		SpawnComponent<UObstacleCrosserComponent>(_obstacleCrosserComponentClass);
+	}
 }

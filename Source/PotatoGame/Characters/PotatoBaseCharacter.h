@@ -29,6 +29,8 @@ class APotatoBaseCharacter : public ACharacter, public IGameplayTagAssetInterfac
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UGameplayTagComponent* GameplayTag;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UNavigationQueryFilter> _navigationQueryFilter;
 public:
 	APotatoBaseCharacter();
 
@@ -45,9 +47,20 @@ public:
 
 	TSubclassOf<UNavigationQueryFilter> GetNavigationQueryFilter() { return _navigationQueryFilter; }
 
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UNavigationQueryFilter> _navigationQueryFilter;
+	template<typename ComponentType>
+	ComponentType* SpawnComponent(UClass* componentClass)
+	{
+		ComponentType* component = NewObject<ComponentType>(this, componentClass ? componentClass : ComponentType::StaticClass());
+		if (ensure(IsValid(component)))
+		{
+			component->RegisterComponent();
+			component->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		}
+		return component;
+	}
 
 private:
 	/** Called for forwards/backward input */
@@ -77,8 +90,6 @@ private:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
-
-	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

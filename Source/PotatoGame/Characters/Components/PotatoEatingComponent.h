@@ -10,7 +10,7 @@ class APotato;
 class USpringArmComponent;
 class UPotatoPickUpComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
 class POTATOGAME_API UPotatoEatingComponent : public USceneComponent
 {
 	GENERATED_BODY()

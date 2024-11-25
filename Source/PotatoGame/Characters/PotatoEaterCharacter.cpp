@@ -7,11 +7,13 @@
 
 #include "Net/UnrealNetwork.h"
 
-APotatoEaterCharacter::APotatoEaterCharacter()
+void APotatoEaterCharacter::PostInitializeComponents()
 {
-	_potatoEatingComponent = CreateDefaultSubobject<UPotatoEatingComponent>(TEXT("PotatoEatingComponent"));
-	_potatoEatingComponent->SetupAttachment(RootComponent);
+	Super::PostInitializeComponents();
 
-	_potatoPickUpComponent = CreateDefaultSubobject<UPotatoPickUpComponent>(TEXT("PotatoPickUpComponent"));
-	_potatoPickUpComponent->SetupAttachment(RootComponent);
+	if (HasAuthority())
+	{
+		SpawnComponent<UPotatoPickUpComponent>(_potatoPickupComponentClass);
+		SpawnComponent<UPotatoEatingComponent>(_potatoEatingComponentClass);
+	}
 }

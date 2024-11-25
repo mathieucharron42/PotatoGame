@@ -21,22 +21,26 @@ UPotatoEatingComponent::UPotatoEatingComponent()
 void UPotatoEatingComponent::Activate(bool reset)
 {
 	Super::Activate(reset);
-
-	UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (ensure(IsValid(tagsComponent)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		tagsComponent->AddTag(Character_Behaviour_PotatoEatingCapabale);
+		UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (ensure(IsValid(tagsComponent)))
+		{
+			tagsComponent->Authority_AddTag(Character_Behaviour_PotatoEatingCapabale);
+		}
 	}
 }
 
 void UPotatoEatingComponent::Deactivate()
 {
 	Super::Deactivate();
-
-	UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (ensure(IsValid(tagsComponent)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		tagsComponent->RemoveTag(Character_Behaviour_PotatoEatingCapabale);
+		UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (ensure(IsValid(tagsComponent)))
+		{
+			tagsComponent->Authority_RemoveTag(Character_Behaviour_PotatoEatingCapabale);
+		}
 	}
 }
 

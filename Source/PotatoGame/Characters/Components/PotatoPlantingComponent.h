@@ -6,7 +6,7 @@
 #include "PotatoPlantingComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
 class POTATOGAME_API UPotatoPlantingComponent : public USceneComponent
 {
 	GENERATED_BODY()

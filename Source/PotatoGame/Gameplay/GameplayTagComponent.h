@@ -18,9 +18,11 @@ class POTATOGAME_API UGameplayTagComponent : public UActorComponent, public IGam
 	GENERATED_BODY()
 
 public:
-	FGameplayTagChanged GameplayTagChanged;
-
 	UGameplayTagComponent();
+
+	FDelegateHandle RegisterTagChange(const FGameplayTagChanged::FDelegate& delegate);
+	FDelegateHandle RegisterAndNotifyTagChange(const FGameplayTagChanged::FDelegate& delegate);
+	void UnregisterTagChange(FDelegateHandle handle);
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(EEndPlayReason::Type reason) override;
@@ -29,20 +31,25 @@ public:
 
 	const FGameplayTagContainer& GetContainer() const { return _gameplayTagContainer; }
 
-	void AddTag(FGameplayTag tag);
+	void Authority_AddTag(FGameplayTag tag);
 
-	void AddTag(FGameplayTag tag, float expiration);
+	void Authority_AddTag(FGameplayTag tag, float expiration);
 
-	void RemoveTag(FGameplayTag tag);
+	void Authority_RemoveTag(FGameplayTag tag);
 
 	bool HasTag(FGameplayTag tag) const;
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+private:
+	void NotifyTags(bool added);
+	void Authority_OnTagExpired(FGameplayTag tag);
+
+	UFUNCTION()
+	void OnReplication_GameplayTagContainer(FGameplayTagContainer old);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, ReplicatedUsing=OnReplication_GameplayTagContainer, meta = (AllowPrivateAccess = "true"))
 	FGameplayTagContainer _gameplayTagContainer;
 
-private:
-	void OnTagExpired(FGameplayTag tag);
+	FGameplayTagChanged GameplayTagChanged;
 
 	TMap<FGameplayTag, FTimerHandle> _tagExpirations;
 };

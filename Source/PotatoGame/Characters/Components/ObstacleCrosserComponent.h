@@ -10,7 +10,7 @@
 class APotato;
 class UInputComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
 class POTATOGAME_API UObstacleCrosserComponent : public USceneComponent
 {
 	GENERATED_BODY()
@@ -30,4 +30,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<ECollisionChannel> _allowedCollisionChannel;
+
+	FDelegateHandle _tagChangedHandle;
 };

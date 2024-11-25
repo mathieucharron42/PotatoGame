@@ -37,20 +37,26 @@ UPotatoPlantingComponent::UPotatoPlantingComponent()
 void UPotatoPlantingComponent::Activate(bool reset)
 {
 	Super::Activate(reset);
-	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (ensure(IsValid(gameplayTagComponent)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		gameplayTagComponent->AddTag(Character_Behaviour_PotatoPlantingCapabale);
+		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (ensure(IsValid(gameplayTagComponent)))
+		{
+			gameplayTagComponent->Authority_AddTag(Character_Behaviour_PotatoPlantingCapabale);
+		}
 	}
 }
 
 void UPotatoPlantingComponent::Deactivate()
 {
 	Super::Deactivate();
-	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (ensure(IsValid(gameplayTagComponent)))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoPlantingCapabale);
+		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (ensure(IsValid(gameplayTagComponent)))
+		{
+			gameplayTagComponent->Authority_RemoveTag(Character_Behaviour_PotatoPlantingCapabale);
+		}
 	}
 }
 
@@ -120,7 +126,7 @@ void UPotatoPlantingComponent::Authority_PlantPotato()
 							UGameplayTagComponent* gameplayTagComponent = owner->GetComponentByClass<UGameplayTagComponent>();
 							if (ensure(IsValid(gameplayTagComponent)))
 							{
-								gameplayTagComponent->AddTag(Character_Behaviour_State_PotatoPlantingCooldown, effectivePlantRate);
+								gameplayTagComponent->Authority_AddTag(Character_Behaviour_State_PotatoPlantingCooldown, effectivePlantRate);
 							}
 						}
 					}
@@ -141,7 +147,14 @@ void UPotatoPlantingComponent::InitializeComponent()
 	APotatoBaseCharacter* owner = Cast<APotatoBaseCharacter>(GetOwner());
 	if (ensure(IsValid(owner)))
 	{
+		// Register to assign component input for next pawn possession
 		owner->OnSetupPlayerInput.AddUObject(this, &UPotatoPlantingComponent::OnSetupPlayerInput);
+
+		// If input already setup, assign component input now
+		if (IsValid(owner->InputComponent))
+		{
+			OnSetupPlayerInput(owner->InputComponent);
+		}
 	}
 }
 

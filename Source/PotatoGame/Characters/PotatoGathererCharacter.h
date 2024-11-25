@@ -14,12 +14,13 @@ class POTATOGAME_API APotatoGathererCharacter : public APotatoBaseCharacter
 {
 	GENERATED_BODY()
 public:
-	APotatoGathererCharacter();
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UPotatoPickUpComponent* _potatoPickUpComponent = nullptr;
+	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UObstacleCrosserComponent* _obstacleCrosserComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPotatoPickUpComponent> _potatoPickupComponentClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UObstacleCrosserComponent> _obstacleCrosserComponentClass;
 };

@@ -16,12 +16,13 @@ class POTATOGAME_API APotatoPlanterCharacter : public APotatoBaseCharacter
 	GENERATED_BODY()
 
 public:
-	APotatoPlanterCharacter();
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UPotatoPlantingComponent* _potatoPlantingComponent;
+	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UPotatoPickUpComponent* _potatoPickUpComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPotatoPlantingComponent> _potatoPlantingComponentClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPotatoPickUpComponent> _potatoPickupComponentClass;
 };

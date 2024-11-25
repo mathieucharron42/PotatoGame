@@ -1,5 +1,7 @@
 #include "GameplayTagComponent.h"
 
+#include "PotatoGame/Utils/PotatoUtilities.h"
+
 #include "Net/UnrealNetwork.h"
 
 UGameplayTagComponent::UGameplayTagComponent()
@@ -14,24 +16,33 @@ void UGameplayTagComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(UGameplayTagComponent, _gameplayTagContainer);
 }
 
+FDelegateHandle UGameplayTagComponent::RegisterTagChange(const FGameplayTagChanged::FDelegate& delegate)
+{
+	return GameplayTagChanged.Add(delegate);
+}
+
+FDelegateHandle UGameplayTagComponent::RegisterAndNotifyTagChange(const FGameplayTagChanged::FDelegate& delegate)
+{
+	FDelegateHandle handle = RegisterTagChange(delegate);
+	NotifyTags(true);
+	return handle;
+}
+
+void UGameplayTagComponent::UnregisterTagChange(FDelegateHandle handle)
+{
+	GameplayTagChanged.Remove(handle);
+}
+
 void UGameplayTagComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	for (FGameplayTag tag : GetContainer())
-	{
-		GameplayTagChanged.Broadcast(tag, true);
-	}
+	NotifyTags(true);
 }
 
 void UGameplayTagComponent::EndPlay(EEndPlayReason::Type reason)
 {
 	Super::EndPlay(reason);
-
-	for (FGameplayTag tag : GetContainer())
-	{
-		GameplayTagChanged.Broadcast(tag, false);
-	}
+	NotifyTags(false);
 }
 
 void UGameplayTagComponent::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
@@ -39,33 +50,51 @@ void UGameplayTagComponent::GetOwnedGameplayTags(FGameplayTagContainer& TagConta
 	TagContainer = _gameplayTagContainer;
 }
 
-void UGameplayTagComponent::AddTag(FGameplayTag tag)
+void UGameplayTagComponent::Authority_AddTag(FGameplayTag tag)
 {
-	bool added = _gameplayTagContainer.HasTagExact(tag);
-	_gameplayTagContainer.AddTag(tag);
-	if (added)
+	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		GameplayTagChanged.Broadcast(tag, true);
+		bool added = _gameplayTagContainer.HasTagExact(tag);
+		_gameplayTagContainer.AddTag(tag);
+		if (added)
+		{
+			GameplayTagChanged.Broadcast(tag, true);
+		}
 	}
 }
 
-void UGameplayTagComponent::AddTag(FGameplayTag tag, float expiration)
+void UGameplayTagComponent::Authority_AddTag(FGameplayTag tag, float expiration)
 {
-	AddTag(tag);
-	if (ensure(GetWorld()))
+	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		FTimerHandle handle;
-		GetWorld()->GetTimerManager().SetTimer(handle, FTimerDelegate::CreateUObject(this,& UGameplayTagComponent::OnTagExpired, tag), expiration, false);
-		_tagExpirations.Add(tag, handle);
+		Authority_AddTag(tag);
+		if (ensure(GetWorld()))
+		{
+			FTimerHandle handle;
+		
+			FTimerDelegate callback = FTimerDelegate::CreateUObject(this, &UGameplayTagComponent::Authority_OnTagExpired, tag);
+			if (expiration > 0)
+			{
+				GetWorld()->GetTimerManager().SetTimer(handle, callback, expiration, false);
+			}
+			else
+			{
+				GetWorld()->GetTimerManager().SetTimerForNextTick(callback);
+			}
+			_tagExpirations.Add(tag, handle);
+		}
 	}
 }
 
-void UGameplayTagComponent::RemoveTag(FGameplayTag tag)
+void UGameplayTagComponent::Authority_RemoveTag(FGameplayTag tag)
 {
-	bool removed = _gameplayTagContainer.RemoveTag(tag);
-	if (removed)
+	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		GameplayTagChanged.Broadcast(tag, false);
+		bool removed = _gameplayTagContainer.RemoveTag(tag);
+		if (removed)
+		{
+			GameplayTagChanged.Broadcast(tag, false);
+		}
 	}
 }
 
@@ -74,8 +103,41 @@ bool UGameplayTagComponent::HasTag(FGameplayTag tag) const
 	return _gameplayTagContainer.HasTag(tag);
 }
 
-void UGameplayTagComponent::OnTagExpired(FGameplayTag tag)
+void UGameplayTagComponent::Authority_OnTagExpired(FGameplayTag tag)
 {
-	_tagExpirations.Remove(tag);
-	RemoveTag(tag);
+	if (ensure(PotatoUtilities::HasAuthority(this)))
+	{
+		_tagExpirations.Remove(tag);
+		Authority_RemoveTag(tag);
+	}
+}
+
+void UGameplayTagComponent::OnReplication_GameplayTagContainer(FGameplayTagContainer old)
+{
+	TArray<FGameplayTag> oldTags = old.GetGameplayTagArray();
+	TArray<FGameplayTag> newTags = _gameplayTagContainer.GetGameplayTagArray();
+
+	for (FGameplayTag oldTag : oldTags)
+	{
+		if (!newTags.Contains(oldTag))
+		{
+			GameplayTagChanged.Broadcast(oldTag, false);
+		}
+	}
+
+	for (FGameplayTag newTag : newTags)
+	{
+		if (!oldTags.Contains(newTag))
+		{
+			GameplayTagChanged.Broadcast(newTag, true);
+		}
+	}
+}
+
+void UGameplayTagComponent::NotifyTags(bool added)
+{
+	for (FGameplayTag tag : GetContainer())
+	{
+		GameplayTagChanged.Broadcast(tag, added);
+	}
 }

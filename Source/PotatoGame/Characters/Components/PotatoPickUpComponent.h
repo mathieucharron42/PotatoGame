@@ -8,7 +8,7 @@
 class APotato;
 class UInputComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
 class POTATOGAME_API UPotatoPickUpComponent : public USceneComponent
 {
 	GENERATED_BODY()

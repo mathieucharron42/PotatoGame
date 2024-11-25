@@ -28,10 +28,13 @@ void UPotatoPickUpComponent::Activate(bool reset)
 {
 	Super::Activate();
 
-	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (IsValid(gameplayTagComponent))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		gameplayTagComponent->AddTag(Character_Behaviour_PotatoPickupCapabale);
+		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (IsValid(gameplayTagComponent))
+		{
+			gameplayTagComponent->Authority_AddTag(Character_Behaviour_PotatoPickupCapabale);
+		}
 	}
 }
 
@@ -39,10 +42,13 @@ void UPotatoPickUpComponent::Deactivate()
 {
 	Super::Deactivate();
 
-	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (IsValid(gameplayTagComponent))
+	if (PotatoUtilities::HasAuthority(this))
 	{
-		gameplayTagComponent->RemoveTag(Character_Behaviour_PotatoPickupCapabale);
+		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (IsValid(gameplayTagComponent))
+		{
+			gameplayTagComponent->Authority_RemoveTag(Character_Behaviour_PotatoPickupCapabale);
+		}
 	}
 }
 
@@ -54,7 +60,15 @@ void UPotatoPickUpComponent::InitializeComponent()
 	{
 		owner->OnActorBeginOverlap.AddDynamic(this, &UPotatoPickUpComponent::OnOwnerOverlap);
 		owner->OnActorHit.AddDynamic(this, &UPotatoPickUpComponent::OnOwnerHit);
+
+		// Register to assign component input for next pawn possession
 		owner->OnSetupPlayerInput.AddUObject(this, &UPotatoPickUpComponent::OnSetupPlayerInput);
+
+		// If input already setup, assign component input now
+		if (IsValid(owner->InputComponent))
+		{
+			OnSetupPlayerInput(owner->InputComponent);
+		}
 	}
 }
 
@@ -170,23 +184,26 @@ void UPotatoPickUpComponent::OnReplicate_HeldPotato(APotato* old)
 
 void UPotatoPickUpComponent::Authority_SetHeldPotato(APotato* potato)
 {
-	APotato* previous = _heldPotato;
-	_heldPotato = potato;
-
-	UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
-	if (IsValid(gameplayTagComponent))
+	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		if (_heldPotato)
-		{
-			gameplayTagComponent->AddTag(Character_Behaviour_State_HoldingPotato);
-		}
-		else
-		{
-			gameplayTagComponent->RemoveTag(Character_Behaviour_State_HoldingPotato);
-		}
-	}
+		APotato* previous = _heldPotato;
+		_heldPotato = potato;
 
-	OnUpdate_HeldPotato(previous);
+		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
+		if (IsValid(gameplayTagComponent))
+		{
+			if (_heldPotato)
+			{
+				gameplayTagComponent->Authority_AddTag(Character_Behaviour_State_HoldingPotato);
+			}
+			else
+			{
+				gameplayTagComponent->Authority_RemoveTag(Character_Behaviour_State_HoldingPotato);
+			}
+		}
+
+		OnUpdate_HeldPotato(previous);
+	}
 }
 
 void UPotatoPickUpComponent::OnUpdate_HeldPotato(APotato* old)
