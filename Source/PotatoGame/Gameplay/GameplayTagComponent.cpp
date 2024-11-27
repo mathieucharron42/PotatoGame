@@ -2,6 +2,7 @@
 
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
+#include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 
 UGameplayTagComponent::UGameplayTagComponent()
@@ -18,7 +19,7 @@ void UGameplayTagComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 
 FDelegateHandle UGameplayTagComponent::RegisterTagChange(const FGameplayTagChanged::FDelegate& delegate)
 {
-	return GameplayTagChanged.Add(delegate);
+	return _gameplayTagChanged.Add(delegate);
 }
 
 FDelegateHandle UGameplayTagComponent::RegisterAndNotifyTagChange(const FGameplayTagChanged::FDelegate& delegate)
@@ -30,7 +31,26 @@ FDelegateHandle UGameplayTagComponent::RegisterAndNotifyTagChange(const FGamepla
 
 void UGameplayTagComponent::UnregisterTagChange(FDelegateHandle handle)
 {
-	GameplayTagChanged.Remove(handle);
+	_gameplayTagChanged.Remove(handle);
+}
+
+void UGameplayTagComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+	AActor* owner = GetOwner();
+	if (ensure(IsValid(owner)))
+	{
+		_abilitySystemComponent = owner->GetComponentByClass<UAbilitySystemComponent>();
+		if (_abilitySystemComponent.IsValid())
+		{
+			_abilitySystemComponent->RegisterGenericGameplayTagEvent().AddUObject(this, &UGameplayTagComponent::OnAbilitySystemGameplayTagChanged);
+		}
+	}
+}
+
+void UGameplayTagComponent::UninitializeComponent()
+{
+	Super::UninitializeComponent();
 }
 
 void UGameplayTagComponent::BeginPlay()
@@ -47,18 +67,35 @@ void UGameplayTagComponent::EndPlay(EEndPlayReason::Type reason)
 
 void UGameplayTagComponent::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
-	TagContainer = _gameplayTagContainer;
+	if (_abilitySystemComponent.IsValid())
+	{
+		_abilitySystemComponent->GetOwnedGameplayTags(TagContainer);
+	}
+	else
+	{
+		TagContainer = _gameplayTagContainer;
+	}
 }
 
 void UGameplayTagComponent::Authority_AddTag(FGameplayTag tag)
 {
 	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		bool added = _gameplayTagContainer.HasTagExact(tag);
-		_gameplayTagContainer.AddTag(tag);
+		bool added = !HasTag(tag);
+
+		if (_abilitySystemComponent.IsValid())
+		{
+			_abilitySystemComponent->AddLooseGameplayTag(tag);
+			_abilitySystemComponent->AddReplicatedLooseGameplayTag(tag);
+		}
+		else
+		{
+			_gameplayTagContainer.AddTag(tag);
+		}
+		
 		if (added)
 		{
-			GameplayTagChanged.Broadcast(tag, true);
+			_gameplayTagChanged.Broadcast(tag, true);
 		}
 	}
 }
@@ -90,17 +127,28 @@ void UGameplayTagComponent::Authority_RemoveTag(FGameplayTag tag)
 {
 	if (ensure(PotatoUtilities::HasAuthority(this)))
 	{
-		bool removed = _gameplayTagContainer.RemoveTag(tag);
+		bool removed = HasTag(tag);
+
+		if (_abilitySystemComponent.IsValid())
+		{
+			_abilitySystemComponent->RemoveLooseGameplayTag(tag);
+			_abilitySystemComponent->RemoveReplicatedLooseGameplayTag(tag);
+		}
+		else
+		{
+			_gameplayTagContainer.RemoveTag(tag);
+		}
+
 		if (removed)
 		{
-			GameplayTagChanged.Broadcast(tag, false);
+			_gameplayTagChanged.Broadcast(tag, false);
 		}
 	}
 }
 
 bool UGameplayTagComponent::HasTag(FGameplayTag tag) const
 {
-	return _gameplayTagContainer.HasTag(tag);
+	return GetOwnedGameplayTags().HasTag(tag);
 }
 
 void UGameplayTagComponent::Authority_OnTagExpired(FGameplayTag tag)
@@ -121,7 +169,7 @@ void UGameplayTagComponent::OnReplication_GameplayTagContainer(FGameplayTagConta
 	{
 		if (!newTags.Contains(oldTag))
 		{
-			GameplayTagChanged.Broadcast(oldTag, false);
+			_gameplayTagChanged.Broadcast(oldTag, false);
 		}
 	}
 
@@ -129,15 +177,28 @@ void UGameplayTagComponent::OnReplication_GameplayTagContainer(FGameplayTagConta
 	{
 		if (!oldTags.Contains(newTag))
 		{
-			GameplayTagChanged.Broadcast(newTag, true);
+			_gameplayTagChanged.Broadcast(newTag, true);
 		}
 	}
 }
 
 void UGameplayTagComponent::NotifyTags(bool added)
 {
-	for (FGameplayTag tag : GetContainer())
+	for (FGameplayTag tag : GetOwnedGameplayTags())
 	{
-		GameplayTagChanged.Broadcast(tag, added);
+		_gameplayTagChanged.Broadcast(tag, added);
 	}
+}
+
+FGameplayTagContainer UGameplayTagComponent::GetOwnedGameplayTags() const
+{ 
+	FGameplayTagContainer container;
+	GetOwnedGameplayTags(container);
+	return container;
+}
+
+void UGameplayTagComponent::OnAbilitySystemGameplayTagChanged(FGameplayTag tag, int32 count)
+{
+	const bool added = count > 0;
+	_gameplayTagChanged.Broadcast(tag, added);
 }

@@ -9,7 +9,8 @@
 
 #include "GameplayTagComponent.generated.h"
 
-enum class TagOperation { Added, Removed };
+class UAbilitySystemComponent;
+
 DECLARE_MULTICAST_DELEGATE_TwoParams(FGameplayTagChanged, FGameplayTag /*tag*/, bool /*added*/);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -24,12 +25,15 @@ public:
 	FDelegateHandle RegisterAndNotifyTagChange(const FGameplayTagChanged::FDelegate& delegate);
 	void UnregisterTagChange(FDelegateHandle handle);
 
+	virtual void InitializeComponent() override;
+	virtual void UninitializeComponent() override;
+
 	virtual void BeginPlay() override;
 	virtual void EndPlay(EEndPlayReason::Type reason) override;
 
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 
-	const FGameplayTagContainer& GetContainer() const { return _gameplayTagContainer; }
+	FGameplayTagContainer GetOwnedGameplayTags() const;
 
 	void Authority_AddTag(FGameplayTag tag);
 
@@ -46,10 +50,14 @@ private:
 	UFUNCTION()
 	void OnReplication_GameplayTagContainer(FGameplayTagContainer old);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, ReplicatedUsing=OnReplication_GameplayTagContainer, meta = (AllowPrivateAccess = "true"))
+	void OnAbilitySystemGameplayTagChanged(FGameplayTag tag, int32 count);
+
+	UPROPERTY(Transient, BlueprintReadWrite, Replicated, ReplicatedUsing=OnReplication_GameplayTagContainer, meta = (AllowPrivateAccess = "true"))
 	FGameplayTagContainer _gameplayTagContainer;
 
-	FGameplayTagChanged GameplayTagChanged;
+	TWeakObjectPtr<UAbilitySystemComponent> _abilitySystemComponent;
+
+	FGameplayTagChanged _gameplayTagChanged;
 
 	TMap<FGameplayTag, FTimerHandle> _tagExpirations;
 };

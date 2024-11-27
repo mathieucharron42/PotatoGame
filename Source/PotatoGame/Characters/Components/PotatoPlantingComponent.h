@@ -1,8 +1,9 @@
 #pragma once
 
+#include "CoreMinimal.h"
+
 #include "PotatoGame/Characters/Components/PotatoPlantingBaseComponent.h"
 
-#include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 
 #include "PotatoPlantingComponent.generated.h"

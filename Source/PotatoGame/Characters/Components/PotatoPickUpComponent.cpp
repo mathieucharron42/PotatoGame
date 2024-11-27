@@ -164,7 +164,7 @@ bool UPotatoPickUpComponent::IsHoldingPotato() const
 		const UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (ensure(IsValid(gameplayTagComponent)))
 		{
-			if (gameplayTagComponent->GetContainer().HasTag(Character_Behaviour_State_HoldingPotato))
+			if (gameplayTagComponent->GetOwnedGameplayTags().HasTag(Character_Behaviour_State_HoldingPotato))
 			{
 				isHoldingPotato = true;
 			}

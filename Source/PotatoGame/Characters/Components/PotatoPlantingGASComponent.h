@@ -1,6 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "PotatoGame/Characters/Components/PotatoPlantingBaseComponent.h"
+
 #include "Components/SceneComponent.h"
 #include "GameplayAbilitySpecHandle.h"
 
@@ -8,21 +11,19 @@
 
 class UPotatoPlantAbility;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class POTATOGAME_API UPotatoPlantingGASComponent : public USceneComponent
+UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
+class POTATOGAME_API UPotatoPlantingGASComponent : public UPotatoPlantingBaseComponent
 {
 	GENERATED_BODY()
 
 public:	
 	UPotatoPlantingGASComponent();
 
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_PlantPotato();
-
-	UFUNCTION(BlueprintCallable)
-	bool CanPlantPotato() const;
+	virtual bool CanPlantPotato() const override;
 
 private:
+	virtual void Server_PlantPotato_Implementation() override;
+
 	virtual void Activate(bool reset) override;
 	virtual void Deactivate() override;
 
