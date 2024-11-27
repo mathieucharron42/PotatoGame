@@ -12,13 +12,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
-static TAutoConsoleVariable<float> CVarPotatoAutoPlantPotato (
-	TEXT("Potato.AutoPlantPotato"),
-	0,
-	TEXT("Auto plant potato (0 for false, 1 for true)"),
-	ECVF_Cheat
-);
-
 static TAutoConsoleVariable<float> CVarPotatoPlantRate(
 	TEXT("Potato.PlantRate"),
 	-1,

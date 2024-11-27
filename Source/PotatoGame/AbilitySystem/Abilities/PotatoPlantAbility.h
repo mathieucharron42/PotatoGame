@@ -54,8 +54,5 @@ private:
 		const FGameplayAbilityActivationInfo ActivationInfo);
 
 	UPROPERTY(EditAnywhere)
-	FGameplayTag _cooldownTag;
-
-	UPROPERTY(EditAnywhere)
 	FPotatoPlantAbilityData _data;
 };

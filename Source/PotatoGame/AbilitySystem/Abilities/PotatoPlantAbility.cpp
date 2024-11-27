@@ -7,6 +7,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "GameFramework/Character.h"
+#include "GameplayEffect.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -48,14 +49,20 @@ void UPotatoPlantAbility::Authority_ActivateAbility(const FGameplayAbilitySpecHa
 		if (success)
 		{
 			const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _data.PlantingRate;
-			//FGameplayEffectSpec gameplayEffectSpec(
-			//	_effect.GetDefaultObject(),
-			//	MakeEffectContext(Handle, ActorInfo)
-			//);
-			// gameplayEffectSpec.SetSetByCallerMagnitude(_cooldownTag, effectivePlantRate);
-			//ActorInfo->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(gameplayEffectSpec);
 			
-			CommitAbilityCooldown(Handle, ActorInfo, CurrentActivationInfo, true);
+			// Setup cooldown effect
+			FGameplayEffectSpecHandle gameplayEffectSpec = MakeOutgoingGameplayEffectSpec(
+				Handle, 
+				ActorInfo, 
+				ActivationInfo, 
+				GetCooldownGameplayEffect()->GetClass(), 
+				1);
+
+			// Set cooldown duration based on effective plant rate
+			gameplayEffectSpec.Data->SetSetByCallerMagnitude(GameplayTag_Character_Behaviour_Cooldown_Duration, effectivePlantRate);
+
+			// Apply cooldown
+			ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, gameplayEffectSpec);
 		}
 	}
 }
