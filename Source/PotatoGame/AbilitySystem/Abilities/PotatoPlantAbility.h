@@ -5,10 +5,15 @@
 
 #include "PotatoPlantAbility.generated.h"
 
+class ACharacter;
+
 UCLASS()
 class POTATOGAME_API UPotatoPlantAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
+public:
+	static bool Authority_PlantPotato(ACharacter* character, FName spawnSocketName, float spawnVelocity);
+
 private:
 	virtual bool CanActivateAbility(
 			const FGameplayAbilitySpecHandle Handle, 

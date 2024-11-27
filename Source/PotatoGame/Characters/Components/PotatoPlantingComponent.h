@@ -14,23 +14,16 @@ class POTATOGAME_API UPotatoPlantingComponent : public UPotatoPlantingBaseCompon
 {
 	GENERATED_BODY()
 
-public:	
-	UPotatoPlantingComponent();
-
-	virtual bool CanPlantPotato() const override;
+public:
 
 private:
-	virtual void Server_PlantPotato_Implementation() override;
+	virtual void Authority_PlantPotato() override;
+	UPROPERTY(EditAnywhere)
+	FName _spawnSocketName = FName("socket_spawn");
 
-	virtual void Activate(bool reset) override;
-	virtual void Deactivate() override;
+	UPROPERTY(EditAnywhere)
+	float _spawnVelocity = 5;
 
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	virtual void InitializeComponent() override;
-	virtual void UninitializeComponent() override;
-
-	void Authority_PlantPotato();
-
-	void OnSetupPlayerInput(UInputComponent* inputComponent);
+	UPROPERTY(EditAnywhere)
+	float _plantingRate = 1;
 };

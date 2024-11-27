@@ -11,21 +11,25 @@ class POTATOGAME_API UPotatoPlantingBaseComponent : public USceneComponent
 	GENERATED_BODY()
 
 public:	
+	UPotatoPlantingBaseComponent();
+
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	virtual void Server_PlantPotato();
+	void Server_PlantPotato();
 
 	UFUNCTION(BlueprintCallable)
-	virtual bool CanPlantPotato() const PURE_VIRTUAL(UPotatoPlantingBaseComponent::Server_PlantPotato, return false;);
+	bool CanPlantPotato() const;
 
 protected:
-	virtual void Server_PlantPotato_Implementation() PURE_VIRTUAL(UPotatoPlantingBaseComponent::Server_PlantPotato_Implementation);
+	virtual void Activate(bool reset) override;
+	virtual void Deactivate() override;
 
-	UPROPERTY(EditAnywhere)
-	FName _spawnSocketName = FName("socket_spawn");
+	virtual void InitializeComponent() override;
+	virtual void UninitializeComponent() override;
 
-	UPROPERTY(EditAnywhere)
-	float _spawnVelocity = 5;
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere)
-	float _plantingRate = 1;
+	virtual void Authority_PlantPotato() PURE_VIRTUAL(UPotatoPlantingBaseComponent::Authority_PlantPotato);
+
+private:
+	void SetupPlayerInput(UInputComponent* inputComponent);
 };

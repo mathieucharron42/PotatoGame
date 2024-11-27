@@ -5,8 +5,6 @@
 #include "PotatoGame/Crops/Potato.h"
 #include "PotatoGame/Gameplay/PotatoGameMode.h"
 
-//#include "GameplayTagAssetInterface.h"
-//#include "GameplayTagContainer.h"
 #include "AbilitySystemComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -50,39 +48,52 @@ void UPotatoPlantAbility::Authority_ActivateAbility(const FGameplayAbilitySpecHa
 	{
 		TWeakObjectPtr<ACharacter> owner = Cast<ACharacter>(ActorInfo->AvatarActor);
 
-		UWorld* world = owner->GetWorld();
+		bool success = Authority_PlantPotato(owner.Get(), _spawnSocketName, _spawnVelocity);
+
+		if (success)
+		{
+			const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _plantingRate;
+
+			FGameplayEffectSpec gameplayEffectSpec(
+				_effect.GetDefaultObject(),
+				MakeEffectContext(Handle, ActorInfo)
+			);
+
+			ActorInfo->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(gameplayEffectSpec);
+		}
+	}
+}
+
+bool UPotatoPlantAbility::Authority_PlantPotato(ACharacter* character, FName spawnSocketName, float spawnVelocity)
+{
+	bool success = false;
+	if (ensure(IsValid(character)))
+	{
+		UWorld* world = character->GetWorld();
 		if (ensure(IsValid(world)))
 		{
-			USkeletalMeshComponent* meshComponent = owner->GetMesh();
-			if (ensure(IsValid(meshComponent)) && ensure(meshComponent->DoesSocketExist(_spawnSocketName)))
+			USkeletalMeshComponent* meshComponent = character->GetMesh();
+			if (ensure(IsValid(meshComponent)) && ensure(meshComponent->DoesSocketExist(spawnSocketName)))
 			{
 				// Locate socket for location
-				FTransform newPotatoTransform = meshComponent->GetSocketTransform(_spawnSocketName);
+				FTransform newPotatoTransform = meshComponent->GetSocketTransform(spawnSocketName);
 
 				// Set random rotation on potato
 				newPotatoTransform.SetRotation(UKismetMathLibrary::RandomRotator(true).Quaternion());
 
 				// Set random velocity in 45 degree half-cone 
-				FVector newPotatoVelocity = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(owner->GetTransform().GetUnitAxis(EAxis::X), 45.f) * _spawnVelocity;
+				FVector newPotatoVelocity = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(character->GetTransform().GetUnitAxis(EAxis::X), 45.f) * spawnVelocity;
 				newPotatoVelocity.Z = FMath::Abs(newPotatoVelocity.Z);
 
 				APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
 				if (ensure(IsValid(gameMode)))
 				{
 					APotato* newPotato = gameMode->SpawnPotato(newPotatoTransform, newPotatoVelocity);
-					UE_LOG(LogPotato, Log, TEXT("Spawned potato %s by %s at %s"), *newPotato->GetName(), *owner->GetName(), *owner->GetTransform().ToString());
-
-					const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _plantingRate;
-
-					FGameplayEffectSpec gameplayEffectSpec(
-						_effect.GetDefaultObject(),
-						MakeEffectContext(Handle, ActorInfo)
-					);
-
-					ActorInfo->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(gameplayEffectSpec);
+					UE_LOG(LogPotato, Log, TEXT("Spawned potato %s by %s at %s"), *newPotato->GetName(), *character->GetName(), *character->GetTransform().ToString());
+					success = true;
 				}
 			}
 		}
 	}
-	
+	return success;
 }

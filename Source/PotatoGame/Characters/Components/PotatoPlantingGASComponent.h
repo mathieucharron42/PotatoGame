@@ -4,7 +4,6 @@
 
 #include "PotatoGame/Characters/Components/PotatoPlantingBaseComponent.h"
 
-#include "Components/SceneComponent.h"
 #include "GameplayAbilitySpecHandle.h"
 
 #include "PotatoPlantingGASComponent.generated.h"
@@ -17,24 +16,12 @@ class POTATOGAME_API UPotatoPlantingGASComponent : public UPotatoPlantingBaseCom
 	GENERATED_BODY()
 
 public:	
-	UPotatoPlantingGASComponent();
-
-	virtual bool CanPlantPotato() const override;
 
 private:
-	virtual void Server_PlantPotato_Implementation() override;
-
 	virtual void Activate(bool reset) override;
 	virtual void Deactivate() override;
 
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	virtual void InitializeComponent() override;
-	virtual void UninitializeComponent() override;
-
-	void Authority_PlantPotato();
-
-	void OnSetupPlayerInput(UInputComponent* inputComponent);
+	virtual void Authority_PlantPotato() override;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPotatoPlantAbility> _plantingAbility;
