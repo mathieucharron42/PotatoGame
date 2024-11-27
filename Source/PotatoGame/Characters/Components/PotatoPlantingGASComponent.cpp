@@ -1,8 +1,10 @@
 #include "PotatoPlantingGASComponent.h"
 
 #include "PotatoGame/AbilitySystem/Abilities/PotatoPlantAbility.h"
+#include "PotatoGame/PotatoGameplayTags.h"
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
+#include "Abilities/GameplayAbilityTypes.h"
 #include "AbilitySystemComponent.h"
 #include "GameFramework/Character.h"
 

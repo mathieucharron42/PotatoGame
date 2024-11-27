@@ -18,6 +18,7 @@ public:
 
 private:
 	virtual void Authority_PlantPotato() override;
+
 	UPROPERTY(EditAnywhere)
 	FName _spawnSocketName = FName("socket_spawn");
 

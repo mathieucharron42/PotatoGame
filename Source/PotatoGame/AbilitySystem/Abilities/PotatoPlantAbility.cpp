@@ -24,11 +24,6 @@ bool UPotatoPlantAbility::CanActivateAbility(
 	const FGameplayTagContainer* TargetTags, 
 	FGameplayTagContainer* OptionalRelevantTags) const
 {
-	if (ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(Character_Behaviour_State_PotatoPlantingCooldown))
-	{
-		return false;
-	}
-	
 	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
 }
 
@@ -48,18 +43,19 @@ void UPotatoPlantAbility::Authority_ActivateAbility(const FGameplayAbilitySpecHa
 	{
 		TWeakObjectPtr<ACharacter> owner = Cast<ACharacter>(ActorInfo->AvatarActor);
 
-		bool success = Authority_PlantPotato(owner.Get(), _spawnSocketName, _spawnVelocity);
+		bool success = Authority_PlantPotato(owner.Get(), _data.SpawnSocketName, _data.SpawnVelocity);
 
 		if (success)
 		{
-			const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _plantingRate;
-
-			FGameplayEffectSpec gameplayEffectSpec(
-				_effect.GetDefaultObject(),
-				MakeEffectContext(Handle, ActorInfo)
-			);
-
-			ActorInfo->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(gameplayEffectSpec);
+			const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _data.PlantingRate;
+			//FGameplayEffectSpec gameplayEffectSpec(
+			//	_effect.GetDefaultObject(),
+			//	MakeEffectContext(Handle, ActorInfo)
+			//);
+			// gameplayEffectSpec.SetSetByCallerMagnitude(_cooldownTag, effectivePlantRate);
+			//ActorInfo->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(gameplayEffectSpec);
+			
+			CommitAbilityCooldown(Handle, ActorInfo, CurrentActivationInfo, true);
 		}
 	}
 }
