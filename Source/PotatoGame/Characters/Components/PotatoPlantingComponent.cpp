@@ -12,12 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
-static TAutoConsoleVariable<float> CVarPotatoPlantRate(
-	TEXT("Potato.PlantRate"),
-	-1,
-	TEXT("Overrides plant rate (-1 for default"),
-	ECVF_Cheat
-);
+extern TAutoConsoleVariable<float> CVarPotatoPlantRate;
 
 void UPotatoPlantingComponent::Authority_PlantPotato()
 {
