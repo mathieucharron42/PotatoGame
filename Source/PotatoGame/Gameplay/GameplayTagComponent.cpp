@@ -8,6 +8,8 @@
 UGameplayTagComponent::UGameplayTagComponent()
 {
 	bWantsInitializeComponent = true;
+	//PrimaryComponentTick.bCanEverTick = true;
+	//PrimaryComponentTick.bStartWithTickEnabled = true;
 	SetIsReplicatedByDefault(true);
 }
 
@@ -182,9 +184,24 @@ void UGameplayTagComponent::OnReplication_GameplayTagContainer(FGameplayTagConta
 	}
 }
 
+void UGameplayTagComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{	
+	auto tags = GetOwnedGameplayTags();
+	if (PotatoUtilities::HasAuthority(this))
+	{
+		Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	}
+	else
+	{
+		AActor* owner = GetOwner();
+		Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	}
+}
+
 void UGameplayTagComponent::NotifyTags(bool added)
 {
-	for (FGameplayTag tag : GetOwnedGameplayTags())
+	auto tags = GetOwnedGameplayTags();
+	for (FGameplayTag tag : tags)
 	{
 		_gameplayTagChanged.Broadcast(tag, added);
 	}
