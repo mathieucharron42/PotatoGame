@@ -52,7 +52,7 @@ private:
 
 	void OnAbilitySystemGameplayTagChanged(FGameplayTag tag, int32 count);
 
-	UPROPERTY(Transient, BlueprintReadWrite, Replicated, ReplicatedUsing=OnReplication_GameplayTagContainer, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, ReplicatedUsing=OnReplication_GameplayTagContainer, meta = (AllowPrivateAccess = "true"))
 	FGameplayTagContainer _gameplayTagContainer;
 
 	TWeakObjectPtr<UAbilitySystemComponent> _abilitySystemComponent;

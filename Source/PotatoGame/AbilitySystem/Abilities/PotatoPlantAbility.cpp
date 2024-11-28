@@ -49,7 +49,7 @@ void UPotatoPlantAbility::Authority_ActivateAbility(const FGameplayAbilitySpecHa
 		{
 			// Set cooldown duration based on effective plant rate
 			const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _data.PlantingRate;
-			currentAbilitySpec->SetByCallerTagMagnitudes.FindOrAdd(GameplayTag_Character_Behaviour_Cooldown_Duration) = effectivePlantRate;
+			currentAbilitySpec->SetByCallerTagMagnitudes.FindOrAdd(GameplayTag_Ability_CooldownDuration) = effectivePlantRate;
 		}
 
 		bool success = false;

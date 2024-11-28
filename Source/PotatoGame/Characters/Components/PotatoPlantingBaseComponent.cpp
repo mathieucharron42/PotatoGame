@@ -36,7 +36,7 @@ void UPotatoPlantingBaseComponent::Activate(bool reset)
 		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (ensure(IsValid(gameplayTagComponent)))
 		{
-			gameplayTagComponent->Authority_AddTag(Character_Behaviour_PotatoPlantingCapabale);
+			gameplayTagComponent->Authority_AddTag(GameplayTag_Ability_PotatoPlanting_Capabale);
 		}
 	}
 }
@@ -49,7 +49,7 @@ void UPotatoPlantingBaseComponent::Deactivate()
 		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (ensure(IsValid(gameplayTagComponent)))
 		{
-			gameplayTagComponent->Authority_RemoveTag(Character_Behaviour_PotatoPlantingCapabale);
+			gameplayTagComponent->Authority_RemoveTag(GameplayTag_Ability_PotatoPlanting_Capabale);
 		}
 	}
 }
@@ -78,7 +78,7 @@ bool UPotatoPlantingBaseComponent::CanPlantPotato() const
 	const UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 	if (IsValid(gameplayTagComponent))
 	{
-		canPlantPotato = !gameplayTagComponent->HasTag(Character_Behaviour_State_PotatoPlantingCooldown);
+		canPlantPotato = !gameplayTagComponent->HasTag(GameplayTag_Ability_PotatoPlanting_Cooldown);
 	}
 
 	return canPlantPotato;

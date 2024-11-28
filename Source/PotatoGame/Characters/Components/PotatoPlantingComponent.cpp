@@ -12,7 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
-extern TAutoConsoleVariable<float> CVarPotatoPlantRate;
+//extern TAutoConsoleVariable<float> CVarPotatoPlantRate;
 
 void UPotatoPlantingComponent::Authority_PlantPotato()
 {
@@ -24,12 +24,13 @@ void UPotatoPlantingComponent::Authority_PlantPotato()
 			bool success = UPotatoPlantAbility::Authority_PlantPotato(character, _spawnSocketName, _spawnVelocity);
 			if (success)
 			{
-				const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0? CVarPotatoPlantRate.GetValueOnGameThread() : _plantingRate;
+				//const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0? CVarPotatoPlantRate.GetValueOnGameThread() : _plantingRate;
+				const float effectivePlantRate = _plantingRate;
 
 				UGameplayTagComponent* gameplayTagComponent = character->GetComponentByClass<UGameplayTagComponent>();
 				if (ensure(IsValid(gameplayTagComponent)))
 				{
-					gameplayTagComponent->Authority_AddTag(Character_Behaviour_State_PotatoPlantingCooldown, effectivePlantRate);
+					gameplayTagComponent->Authority_AddTag(GameplayTag_Ability_PotatoPlanting_Cooldown, effectivePlantRate);
 				}
 			}
 		}

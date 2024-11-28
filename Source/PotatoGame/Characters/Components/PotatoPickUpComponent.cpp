@@ -34,7 +34,7 @@ void UPotatoPickUpComponent::Activate(bool reset)
 		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (IsValid(gameplayTagComponent))
 		{
-			gameplayTagComponent->Authority_AddTag(Character_Behaviour_PotatoPickupCapabale);
+			gameplayTagComponent->Authority_AddTag(GameplayTag_Ability_PotatoPickup_Capabale);
 		}
 	}
 }
@@ -48,7 +48,7 @@ void UPotatoPickUpComponent::Deactivate()
 		UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (IsValid(gameplayTagComponent))
 		{
-			gameplayTagComponent->Authority_RemoveTag(Character_Behaviour_PotatoPickupCapabale);
+			gameplayTagComponent->Authority_RemoveTag(GameplayTag_Ability_PotatoPickup_Capabale);
 		}
 	}
 }
@@ -164,7 +164,7 @@ bool UPotatoPickUpComponent::IsHoldingPotato() const
 		const UGameplayTagComponent* gameplayTagComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (ensure(IsValid(gameplayTagComponent)))
 		{
-			if (gameplayTagComponent->GetOwnedGameplayTags().HasTag(Character_Behaviour_State_HoldingPotato))
+			if (gameplayTagComponent->GetOwnedGameplayTags().HasTag(GameplayTag_Ability_PotatoPickup_IsHolding))
 			{
 				isHoldingPotato = true;
 			}
@@ -195,11 +195,11 @@ void UPotatoPickUpComponent::Authority_SetHeldPotato(APotato* potato)
 		{
 			if (_heldPotato)
 			{
-				gameplayTagComponent->Authority_AddTag(Character_Behaviour_State_HoldingPotato);
+				gameplayTagComponent->Authority_AddTag(GameplayTag_Ability_PotatoPickup_IsHolding);
 			}
 			else
 			{
-				gameplayTagComponent->Authority_RemoveTag(Character_Behaviour_State_HoldingPotato);
+				gameplayTagComponent->Authority_RemoveTag(GameplayTag_Ability_PotatoPickup_IsHolding);
 			}
 		}
 

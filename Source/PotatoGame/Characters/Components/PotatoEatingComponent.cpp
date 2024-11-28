@@ -27,7 +27,7 @@ void UPotatoEatingComponent::Activate(bool reset)
 		UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (ensure(IsValid(tagsComponent)))
 		{
-			tagsComponent->Authority_AddTag(Character_Behaviour_PotatoEatingCapabale);
+			tagsComponent->Authority_AddTag(GameplayTag_Ability_PotatoEating_Capabale);
 		}
 	}
 }
@@ -40,7 +40,7 @@ void UPotatoEatingComponent::Deactivate()
 		UGameplayTagComponent* tagsComponent = PotatoUtilities::GetComponentByClass<UGameplayTagComponent>(this);
 		if (ensure(IsValid(tagsComponent)))
 		{
-			tagsComponent->Authority_RemoveTag(Character_Behaviour_PotatoEatingCapabale);
+			tagsComponent->Authority_RemoveTag(GameplayTag_Ability_PotatoEating_Capabale);
 		}
 	}
 }

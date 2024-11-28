@@ -1,18 +1,19 @@
 #include "PotatoGameplayTags.h"
  
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoPickupCapabale, "Character.Behaviour.PotatoPickupCapabale", "Able to pick up potato");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoPlantingCapabale, "Character.Behaviour.PotatoPlantingCapabale", "Able to plant potato");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoHoldingCapabale, "Character.Behaviour.PotatoHoldingCapabale", "Able to hold potato");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoEatingCapabale, "Character.Behaviour.PotatoEatingCapabale", "Able to eat potato");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoObstacleCrossingCapable, "Character.Behaviour.PotatoObstacleCrossingCapable", "Able to cross obstacles");
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_PotatoPickup_Capabale, "Ability.PotatoPickup.Capabale")
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_PotatoPickup_IsHolding, "Ability.PotatoPickup.IsHolding")
 
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_PotatoPlanting_Trigger, "Character.Behaviour.PotatoPlanting.Trigger", "Whether potato planting was triggered");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayTag_Character_Behaviour_Cooldown_Duration, "Character.Behaviour.Cooldown.Duration", "Cooldown duration");
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_PotatoPlanting_Capabale, "Ability.PotatoPlanting.Capabale")
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_PotatoPlanting_Cooldown, "Ability.PotatoPlanting.Cooldown")
 
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_State_HoldingPotato, "Character.Behaviour.State.HoldingPotato", "Whether is currently holding potato");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_Behaviour_State_PotatoPlantingCooldown, "Character.Behaviour.State.PotatoPlantingCooldown", "Whether potato planting is cooling down");
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_PotatoEating_Capabale, "Ability.PotatoEating.Capabale")
 
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cheat_Behaviour_PotatoRainable, "Cheat.Behaviour.PotatoRainable", "Able to rain potato");
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_PotatoObstacleCrossing_Capable, "Ability.PotatoObstacleCrossing.Capable")
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_PotatoObstacleCrossing_Active, "Ability.PotatoObstacleCrossing.Active");
 
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Zone_State_PotatoPlanting, "Zone.State.PotatoPlanting", "Zone where potato are planted");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Zone_State_PotatoEating, "Zone.State.PotatoEating", "Zone where potato are eaten");
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Ability_CooldownDuration, "Ability.CooldownDuration")
+
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Zone_PotatoPlanting, "Zone.PotatoPlanting")
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Zone_PotatoEating, "Zone.PotatoEating")
+
+UE_DEFINE_GAMEPLAY_TAG(GameplayTag_Cheat_Ability_PotatoRain_Capable, "Cheat.Ability.PotatoRain.Capable")
