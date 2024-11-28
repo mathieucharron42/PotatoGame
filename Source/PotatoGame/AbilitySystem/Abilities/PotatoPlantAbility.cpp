@@ -44,26 +44,20 @@ void UPotatoPlantAbility::Authority_ActivateAbility(const FGameplayAbilitySpecHa
 	{
 		TWeakObjectPtr<ACharacter> owner = Cast<ACharacter>(ActorInfo->AvatarActor);
 
-		bool success = Authority_PlantPotato(owner.Get(), _data.SpawnSocketName, _data.SpawnVelocity);
-
-		if (success)
+		FGameplayAbilitySpec* currentAbilitySpec = GetCurrentAbilitySpec();
+		if (currentAbilitySpec)
 		{
-			const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _data.PlantingRate;
-			
-			// Setup cooldown effect
-			FGameplayEffectSpecHandle gameplayEffectSpec = MakeOutgoingGameplayEffectSpec(
-				Handle, 
-				ActorInfo, 
-				ActivationInfo, 
-				GetCooldownGameplayEffect()->GetClass(), 
-				1);
-
 			// Set cooldown duration based on effective plant rate
-			gameplayEffectSpec.Data->SetSetByCallerMagnitude(GameplayTag_Character_Behaviour_Cooldown_Duration, effectivePlantRate);
-
-			// Apply cooldown
-			ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, gameplayEffectSpec);
+			const float effectivePlantRate = CVarPotatoPlantRate.GetValueOnGameThread() > 0 ? CVarPotatoPlantRate.GetValueOnGameThread() : _data.PlantingRate;
+			currentAbilitySpec->SetByCallerTagMagnitudes.FindOrAdd(GameplayTag_Character_Behaviour_Cooldown_Duration) = effectivePlantRate;
 		}
+
+		bool success = false;
+		if (CommitAbility(Handle, ActorInfo, ActivationInfo))
+		{
+			success = Authority_PlantPotato(owner.Get(), _data.SpawnSocketName, _data.SpawnVelocity);
+		}
+		EndAbility(Handle, ActorInfo, ActivationInfo, success, false);
 	}
 }
 
