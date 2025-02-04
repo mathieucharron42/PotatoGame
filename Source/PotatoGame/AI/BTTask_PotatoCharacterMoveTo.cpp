@@ -10,7 +10,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
-#include "AIModule/Classes/AIController.h"
+#include "AIController.h"
 
 uint16 UBTTask_PotatoCharacterMoveTo::GetInstanceMemorySize() const
 {

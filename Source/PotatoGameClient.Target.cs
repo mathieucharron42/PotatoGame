@@ -8,8 +8,8 @@ public class PotatoGameClientTarget : TargetRules
 	public PotatoGameClientTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Client;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
-		bOverrideBuildEnvironment = true;
-		ExtraModuleNames.Add("PotatoGame");
-	}
+        DefaultBuildSettings = BuildSettingsVersion.V5;
+        bOverrideBuildEnvironment = true;
+        ExtraModuleNames.Add("PotatoGame");
+    }
 }
