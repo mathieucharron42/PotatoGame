@@ -119,7 +119,11 @@ class POTATOGAME_API UDebugDrawInWorldComponent : public USceneComponent
 public:	
 	UDebugDrawInWorldComponent(const FObjectInitializer& ObjectInitializer);
 
+	void EnableDrawPoint(const FDrawInWorldPointProperties& properties);
 	void EnableDrawSphere(const FDrawInWorldSphereProperties& properties);
+	void EnableDrawBox(const FDrawInWorldBoxProperties& properties);
+	void EnableDrawArrow(const FDrawInWorldArrowProperties& properties);
+	void EnableDrawText(const FDrawInWorldTextProperties& properties);
 	
 	void EnableSelfDestructActor(float delay);
 	void EnableSelfDestructComponent(float delay);

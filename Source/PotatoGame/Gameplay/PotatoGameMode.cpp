@@ -90,7 +90,7 @@ APotatoBaseCharacter* APotatoGameMode::FindSuitableCharacter(const TSubclassOf<A
 	{
 		for (TActorIterator<APotatoBaseCharacter> it(world); it && !IsValid(suitableCharacter); ++it)
 		{
-			TRACE_CPUPROFILER_EVENT_SCOPE(TEXT("APotatoGameMode::FindSuitableCharacter Loop"))
+			TRACE_CPUPROFILER_EVENT_SCOPE(TEXT("APotatoGameMode::FindSuitableCharacter Loop Iteration"))
 			APotatoBaseCharacter* character = Cast<APotatoBaseCharacter>(*it);
 			if (IsSuitableCharacter(type, character))
 			{

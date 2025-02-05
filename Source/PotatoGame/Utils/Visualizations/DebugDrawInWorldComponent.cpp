@@ -15,10 +15,34 @@ UDebugDrawInWorldComponent::UDebugDrawInWorldComponent(const FObjectInitializer&
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UDebugDrawInWorldComponent::EnableDrawSphere(const FDrawInWorldSphereProperties& sphereProperties)
+void UDebugDrawInWorldComponent::EnableDrawPoint(const FDrawInWorldPointProperties& properties)
+{
+	_pointEnabled = true;
+	_pointProperties = properties;
+}
+
+void UDebugDrawInWorldComponent::EnableDrawSphere(const FDrawInWorldSphereProperties& properties)
 {
 	_sphereEnabled = true;
-	_sphereProperties = sphereProperties;
+	_sphereProperties = properties;
+}
+
+void UDebugDrawInWorldComponent::EnableDrawBox(const FDrawInWorldBoxProperties& properties)
+{
+	_boxEnabled = true;
+	_boxProperties = properties;
+}
+
+void UDebugDrawInWorldComponent::EnableDrawArrow(const FDrawInWorldArrowProperties& properties)
+{
+	_arrowEnabled = true;
+	_arrowProperties = properties;
+}
+
+void UDebugDrawInWorldComponent::EnableDrawText(const FDrawInWorldTextProperties& properties)
+{
+	_textEnabled = true;
+	_textProperties = properties;
 }
 
 void UDebugDrawInWorldComponent::BeginPlay()

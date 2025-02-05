@@ -6,9 +6,33 @@
 
 static TAutoConsoleVariable<int32> CVarEnableDebugDrawOnScreen(
 	TEXT("potato.DebugDrawOnScreen"),
-	0,
+	1,
 	TEXT("Enables debug draw on screen components")
 );
+
+void UDebugDrawOnScreenComponent::EnableDrawLine(const FDrawOnScreenLineProperties& properties)
+{
+	_lineEnabled = true;
+	_lineProperties = properties;
+}
+
+void UDebugDrawOnScreenComponent::EnableDrawBox(const FDrawOnScreenBoxProperties& properties)
+{
+	_boxEnabled = true;
+	_boxProperties = properties;
+}
+
+void UDebugDrawOnScreenComponent::EnableDrawCircle(const FDrawOnScreenCircleProperties& properties)
+{
+	_circleEnabled = true;
+	_circleProperties = properties;
+}
+
+void UDebugDrawOnScreenComponent::EnableDrawText(const FDrawOnScreenTextProperties& properties)
+{
+	_textEnabled = true;
+	_textProperties = properties;
+}
 
 void UDebugDrawOnScreenComponent::BeginPlay()
 {
@@ -24,6 +48,7 @@ void UDebugDrawOnScreenComponent::EndPlay(const EEndPlayReason::Type EndPlayReas
 
 void UDebugDrawOnScreenComponent::OnPostRender(AHUD* HUD, UCanvas* canvas)
 {
+	AActor* a = GetOwner();
 	if (CVarEnableDebugDrawOnScreen.GetValueOnGameThread())
 	{
 		if (IsValid(canvas)) 

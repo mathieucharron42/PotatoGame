@@ -84,6 +84,11 @@ class POTATOGAME_API UDebugDrawOnScreenComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
+	void EnableDrawLine(const FDrawOnScreenLineProperties& properties);
+	void EnableDrawBox(const FDrawOnScreenBoxProperties& properties);
+	void EnableDrawCircle(const FDrawOnScreenCircleProperties& properties);
+	void EnableDrawText(const FDrawOnScreenTextProperties& properties);
+
 private:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -99,17 +104,20 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Debug Line", meta = (EditCondition = "_lineEnabled"))
 	FDrawOnScreenLineProperties _lineProperties;
 
+
 	UPROPERTY(EditAnywhere, Category = "Debug Box")
 	bool _boxEnabled = false;
 
 	UPROPERTY(EditAnywhere, Category = "Debug Box", meta = (EditCondition = "_boxEnabled"))
 	FDrawOnScreenBoxProperties _boxProperties;
 
+
 	UPROPERTY(EditAnywhere, Category = "Debug Circle")
 	bool _circleEnabled = false;
 
 	UPROPERTY(EditAnywhere, Category = "Debug Circle", meta = (EditCondition = "_circleEnabled"))
 	FDrawOnScreenCircleProperties _circleProperties;
+
 
 	UPROPERTY(EditAnywhere, Category = "Debug Text")
 	bool _textEnabled = false;

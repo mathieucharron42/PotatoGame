@@ -14,6 +14,7 @@
 
 class UAbilitySystemComponent;
 struct FNavigationQueryFilte;
+class UNavigationQueryFilter;
 
 UCLASS(Abstract, config=Game)
 class APotatoBaseCharacter : public ACharacter, public IGameplayTagAssetInterface, public IAbilitySystemInterface
