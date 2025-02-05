@@ -1,2 +1,3 @@
 @echo off
-START ./../UnrealEngine/Engine/Binaries/Win64/UnrealEditor.exe %~dp0PotatoGame.uproject ?listen -server -log
+call set_engine_path.bat
+START "" "%editor_exe_path%" "%~dp0PotatoGame.uproject" ?listen -server -log

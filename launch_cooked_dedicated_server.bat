@@ -1,2 +1,3 @@
 @echo off
-START ./Packaged/WindowsServer/PotatoGameServer.exe ?listen -log
+call set_cooked_path.bat
+START %cooked_potato_server_exe_path% ?listen -log
