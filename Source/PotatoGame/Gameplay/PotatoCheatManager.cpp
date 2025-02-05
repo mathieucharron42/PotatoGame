@@ -11,9 +11,11 @@
 #include "PotatoGame/Utils/PotatoUtilities.h"
 
 #include "EngineUtils.h"
-#include "Kismet/GameplayStatics.h"
+#include "Engine/DebugCameraController.h"
 #include "Engine/TriggerBox.h"
+#include "Kismet/GameplayStatics.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "PotatoPlayerState.h"
 
 void UPotatoCheatManager::Potato_SpawnPotatoes(int32 amount)
 {
@@ -326,6 +328,33 @@ void UPotatoCheatManager::DeactivateAI(const TArray<EGameRoleType>& roles)
 			}
 			gameMode->SetAIRoles(newRoles);
 			gameMode->RefreshAIControllers();
+		}
+	}
+}
+
+void UPotatoCheatManager::Potato_Unpossess()
+{
+	APotatoPlayerController* controller = Cast<APotatoPlayerController>(GetOuterAPlayerController());
+	if (ensure(IsValid(controller)))
+	{
+		controller->UnPossess();
+	}
+}
+
+void UPotatoCheatManager::Potato_Repossess()
+{
+	UWorld* world = GetWorld();
+	APotatoPlayerController* controller = Cast<APotatoPlayerController>(GetOuterAPlayerController());
+	if (ensure(IsValid(controller)))
+	{
+		APotatoPlayerState* playerState = controller->GetPlayerState<APotatoPlayerState>();
+		if (ensure(IsValid(playerState)))
+		{
+			APotatoGameMode* gameMode = world->GetAuthGameMode<APotatoGameMode>();
+			if (ensure(IsValid(gameMode)))
+			{
+				gameMode->PocessRole(controller, playerState->GetCurrentRole());
+			}
 		}
 	}
 }

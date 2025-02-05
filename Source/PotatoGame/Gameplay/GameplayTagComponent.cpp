@@ -8,8 +8,6 @@
 UGameplayTagComponent::UGameplayTagComponent()
 {
 	bWantsInitializeComponent = true;
-	//PrimaryComponentTick.bCanEverTick = true;
-	//PrimaryComponentTick.bStartWithTickEnabled = true;
 	SetIsReplicatedByDefault(true);
 }
 
@@ -24,13 +22,6 @@ FDelegateHandle UGameplayTagComponent::RegisterTagChange(const FGameplayTagChang
 	return _gameplayTagChanged.Add(delegate);
 }
 
-FDelegateHandle UGameplayTagComponent::RegisterAndNotifyTagChange(const FGameplayTagChanged::FDelegate& delegate)
-{
-	FDelegateHandle handle = RegisterTagChange(delegate);
-	NotifyTags(true);
-	return handle;
-}
-
 void UGameplayTagComponent::UnregisterTagChange(FDelegateHandle handle)
 {
 	_gameplayTagChanged.Remove(handle);
@@ -42,7 +33,7 @@ void UGameplayTagComponent::InitializeComponent()
 	AActor* owner = GetOwner();
 	if (ensure(IsValid(owner)))
 	{
-		_abilitySystemComponent = owner->GetComponentByClass<UAbilitySystemComponent>();
+		// _abilitySystemComponent = owner->GetComponentByClass<UAbilitySystemComponent>();
 		if (_abilitySystemComponent.IsValid())
 		{
 			_abilitySystemComponent->RegisterGenericGameplayTagEvent().AddUObject(this, &UGameplayTagComponent::OnAbilitySystemGameplayTagChanged);
@@ -181,20 +172,6 @@ void UGameplayTagComponent::OnReplication_GameplayTagContainer(FGameplayTagConta
 		{
 			_gameplayTagChanged.Broadcast(newTag, true);
 		}
-	}
-}
-
-void UGameplayTagComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{	
-	auto tags = GetOwnedGameplayTags();
-	if (PotatoUtilities::HasAuthority(this))
-	{
-		Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	}
-	else
-	{
-		AActor* owner = GetOwner();
-		Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	}
 }
 

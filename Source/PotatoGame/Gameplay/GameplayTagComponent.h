@@ -22,7 +22,6 @@ public:
 	UGameplayTagComponent();
 
 	FDelegateHandle RegisterTagChange(const FGameplayTagChanged::FDelegate& delegate);
-	FDelegateHandle RegisterAndNotifyTagChange(const FGameplayTagChanged::FDelegate& delegate);
 	void UnregisterTagChange(FDelegateHandle handle);
 
 	virtual void InitializeComponent() override;
@@ -30,8 +29,6 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(EEndPlayReason::Type reason) override;
-
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 

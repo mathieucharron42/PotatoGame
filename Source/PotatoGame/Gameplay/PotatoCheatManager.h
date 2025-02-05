@@ -34,6 +34,12 @@ class POTATOGAME_API UPotatoCheatManager : public UCheatManager
 	void Potato_RemoveForceField();
 
 	UFUNCTION(Exec)
+	void Potato_Unpossess();
+
+	UFUNCTION(Exec)
+	void Potato_Repossess();
+
+	UFUNCTION(Exec)
 	void Potato_ActivateAIAllCharacter();
 
 	UFUNCTION(Exec)

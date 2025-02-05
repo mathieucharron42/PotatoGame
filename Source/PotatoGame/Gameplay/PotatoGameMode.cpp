@@ -237,19 +237,29 @@ bool APotatoGameMode::ChangeRole(APotatoPlayerController* playerController)
 	for (FPotatoGameRole role = GetNextRole(initialRole); initialRole != role && !found; role = GetNextRole(role))
 	{
 		TRACE_CPUPROFILER_EVENT_SCOPE(TEXT("APotatoGameMode::ChangeRole Loop"))
-
-		APotatoBaseCharacter* character = FindSuitableCharacter(role.GetCharacterType());
-		if (IsValid(character))
-		{
-			playerController->Possess(character);
-			playerState->SetCurrentRole(role);
-			found = true;
-		}
+		found = PocessRole(playerController, role);
 	}
 
 	SpawnAIControllers(_aiRoles);
 
 	return found;
+}
+
+bool APotatoGameMode::PocessRole(APotatoPlayerController* playerController, FPotatoGameRole role)
+{
+	bool isValid = false;
+	APotatoBaseCharacter* character = FindSuitableCharacter(role.GetCharacterType());
+	if (IsValid(character))
+	{
+		APotatoPlayerState* playerState = playerController->GetPlayerState<APotatoPlayerState>();
+		if (IsValid(playerState))
+		{
+			playerController->Possess(character);
+			playerState->SetCurrentRole(role);
+		}
+		isValid = true;
+	}
+	return isValid;
 }
 
 void APotatoGameMode::QuitGame(APotatoPlayerController* playerController)

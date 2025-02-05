@@ -35,6 +35,8 @@ private:
 	static bool IsPossessedByPlayer(const ACharacter* character);
 
 	virtual void RestartPlayer(AController* NewPlayer) override;
+
+	bool PocessRole(APotatoPlayerController* playerController, FPotatoGameRole role);
 	
 	void CheckGameEnded();
 
