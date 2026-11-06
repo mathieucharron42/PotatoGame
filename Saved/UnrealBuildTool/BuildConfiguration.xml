@@ -3,4 +3,7 @@
   <ProjectFileGenerator>
     <Format>VisualStudio2022</Format>
   </ProjectFileGenerator>
+  <WindowsPlatform>
+    <Compiler>VisualStudio2026</Compiler>
+  </WindowsPlatform>
 </Configuration>
