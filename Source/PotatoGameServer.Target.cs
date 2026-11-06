@@ -8,7 +8,7 @@ public class PotatoGameServerTarget : TargetRules
 	public PotatoGameServerTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Server;
-        DefaultBuildSettings = BuildSettingsVersion.V5;
+        DefaultBuildSettings = BuildSettingsVersion.V7;
         bOverrideBuildEnvironment = true;
         ExtraModuleNames.Add("PotatoGame");
     }
