@@ -1,19 +1,12 @@
 #include "PotatoEaterCharacter.h"
 
-#include "PotatoGame/Characters/Components/PotatoEatingBaseComponent.h"
-#include "PotatoGame/Characters/Components/PotatoPickUpBaseComponent.h"
+#include "PotatoGame/Characters/Components/PotatoEatingComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
 
-#include "GameFramework/SpringArmComponent.h"
-
-#include "Net/UnrealNetwork.h"
-
-void APotatoEaterCharacter::PostInitializeComponents()
+APotatoEaterCharacter::APotatoEaterCharacter()
 {
-	Super::PostInitializeComponents();
-
-	if (HasAuthority())
-	{
-		SpawnComponent<UPotatoPickUpBaseComponent>(_potatoPickupComponentClass);
-		SpawnComponent<UPotatoEatingBaseComponent>(_potatoEatingComponentClass);
-	}
+	_potatoPickupComponent = CreateDefaultSubobject<UPotatoPickUpComponent>(TEXT("PotatoPickupComponent"));
+	_potatoPickupComponent->SetupAttachment(RootComponent);
+	_potatoEatingComponent = CreateDefaultSubobject<UPotatoEatingComponent>(TEXT("PotatoEatingComponent"));
+	_potatoEatingComponent->SetupAttachment(RootComponent);
 }

@@ -55,19 +55,6 @@ public:
 
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 
-protected:
-	template<typename ComponentType>
-	ComponentType* SpawnComponent(UClass* componentClass)
-	{
-		ComponentType* component = NewObject<ComponentType>(this, componentClass ? componentClass : ComponentType::StaticClass());
-		if (ensure(IsValid(component)))
-		{
-			component->RegisterComponent();
-			component->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		}
-		return component;
-	}
-
 private:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);

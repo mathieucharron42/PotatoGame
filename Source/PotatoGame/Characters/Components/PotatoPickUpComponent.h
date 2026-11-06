@@ -1,7 +1,5 @@
 #pragma once
 
-#include "PotatoGame/Characters/Components/PotatoPlantingBaseComponent.h"
-#include "PotatoGame/Characters/Components/PotatoPickUpBaseComponent.h"
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
@@ -12,19 +10,23 @@ class APotato;
 class UInputComponent;
 
 UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
-class POTATOGAME_API UPotatoPickUpComponent : public UPotatoPickUpBaseComponent
+class POTATOGAME_API UPotatoPickUpComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_DropPotato();
+
 	UPotatoPickUpComponent();
 
-	virtual bool IsHoldingPotato() const override;
-	virtual bool IsHoldingPotato(APotato* potato) const override;
+	UFUNCTION(BlueprintCallable)
+	bool IsHoldingPotato() const;
+	bool IsHoldingPotato(APotato* potato) const;
 
-	virtual APotato* Authority_DropPotato() override;
+	APotato* Authority_DropPotato();
 
-	virtual void Authority_PickupPotato(APotato* potato) override;
+	void Authority_PickupPotato(APotato* potato);
 
 private:
 	virtual void Activate(bool reset) override;
@@ -33,11 +35,11 @@ private:
 	virtual void InitializeComponent() override;
 	virtual void UninitializeComponent() override;
 
-	virtual void Server_DropPotato_Implementation() override;
+	virtual void Server_DropPotato_Implementation();
 
 	UFUNCTION()
 	void OnOwnerOverlap(AActor* owningActor, AActor* otherActor);
-	
+
 	UFUNCTION()
 	void OnOwnerHit(AActor* owningActor, AActor* otherActor, FVector normalImpulse, const FHitResult& hit);
 
@@ -52,4 +54,7 @@ private:
 
 	UPROPERTY(Transient, Replicated, ReplicatedUsing = OnReplicate_HeldPotato)
 	APotato* _heldPotato = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	FName _heldSocketName = FName("socket_hand_r");
 };

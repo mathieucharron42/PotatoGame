@@ -50,7 +50,7 @@ void UPotatoCharacterWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 					role = TEXT("Potato Planter");
 					color = FColor::Emerald;
 				}
-				UPotatoPickUpBaseComponent* potatoPickupComponent = pawn->FindComponentByClass<UPotatoPickUpBaseComponent>();
+				UPotatoPickUpComponent* potatoPickupComponent = pawn->FindComponentByClass<UPotatoPickUpComponent>();
 				if (IsValid(potatoPickupComponent))
 				{
 					instructions.Add(TEXT("Move over a potato to pick one up"));
@@ -58,19 +58,19 @@ void UPotatoCharacterWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 					instructions.Add(FString::Printf(TEXT("Is holding potato: %s"), potatoPickupComponent->IsHoldingPotato() ? TEXT("true") : TEXT("false")));
 				}
 
-				UPotatoPlantingBaseComponent* potatoPlantingComponent = pawn->FindComponentByClass<UPotatoPlantingBaseComponent>();
+				UPotatoPlantingComponent* potatoPlantingComponent = pawn->FindComponentByClass<UPotatoPlantingComponent>();
 				if (IsValid(potatoPlantingComponent))
 				{
 					instructions.Add(TEXT("Left click to spawn potatoes"));
 				}
 
-				UObstacleCrosserBaseComponent* obastacleCrosserComponent = pawn->FindComponentByClass<UObstacleCrosserBaseComponent>();
+				UObstacleCrosserComponent* obastacleCrosserComponent = pawn->FindComponentByClass<UObstacleCrosserComponent>();
 				if (IsValid(obastacleCrosserComponent))
 				{
 					instructions.Add(TEXT("Cross obstacles by walking through them"));
 				}
 
-				UPotatoEatingBaseComponent* potatoEatingComponent = pawn->FindComponentByClass<UPotatoEatingBaseComponent>();
+				UPotatoEatingComponent* potatoEatingComponent = pawn->FindComponentByClass<UPotatoEatingComponent>();
 				if (IsValid(potatoEatingComponent))
 				{
 					instructions.Add(TEXT("Right click to eat held potatoes"));

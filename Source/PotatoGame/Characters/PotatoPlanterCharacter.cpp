@@ -1,19 +1,12 @@
 #include "PotatoPlanterCharacter.h"
 
-#include "PotatoGame/Gameplay/PotatoGameMode.h"
-#include "PotatoGame/Characters/Components/PotatoPlantingBaseComponent.h"
-#include "PotatoGame/Characters/Components/PotatoPickUpBaseComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPlantingComponent.h"
+#include "PotatoGame/Characters/Components/PotatoPickUpComponent.h"
 
-#include "Components/InputComponent.h"
-#include "GameplayTagContainer.h"
-
-void APotatoPlanterCharacter::PostInitializeComponents()
+APotatoPlanterCharacter::APotatoPlanterCharacter()
 {
-	Super::PostInitializeComponents();
-
-	if (HasAuthority())
-	{
-		SpawnComponent<UPotatoPlantingBaseComponent>(_potatoPlantingComponentClass);
-		SpawnComponent<UPotatoPickUpBaseComponent>(_potatoPickupComponentClass);
-	}
+	_potatoPlantingComponent = CreateDefaultSubobject<UPotatoPlantingComponent>(TEXT("PotatoPlantingComponent"));
+	_potatoPlantingComponent->SetupAttachment(RootComponent);
+	_potatoPickupComponent = CreateDefaultSubobject<UPotatoPickUpComponent>(TEXT("PotatoPickupComponent"));
+	_potatoPickupComponent->SetupAttachment(RootComponent);
 }

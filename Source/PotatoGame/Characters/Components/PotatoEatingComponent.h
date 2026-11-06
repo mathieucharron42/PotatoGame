@@ -2,22 +2,55 @@
 
 #pragma once
 
-#include "PotatoGame/Characters/Components/PotatoEatingBaseComponent.h"
-
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SceneComponent.h"
 #include "PotatoEatingComponent.generated.h"
 
 class APotato;
 class USpringArmComponent;
 
-UCLASS( ClassGroup=(Custom), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent) )
-class POTATOGAME_API UPotatoEatingComponent : public UPotatoEatingBaseComponent
+UCLASS(ClassGroup = (Custom), Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
+class POTATOGAME_API UPotatoEatingComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
-public:		
-	
+public:
+	UPotatoEatingComponent();
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_EatHeldPotato();
+
+	bool IsHungry() const;
+
+	float GetCaloriesNeeded() const;
+
+	float GetCaloriesEaten() const;
+
+	void IncrementCaloriesEaten(float calories);
+
+protected:
+	virtual void Authority_EatHeldPotato();
+
+	virtual void Activate(bool reset) override;
+	virtual void Deactivate() override;
+
+	virtual void BeginPlay() override;
+
+	virtual void InitializeComponent() override;
+	virtual void UninitializeComponent() override;
+
 private:
-	virtual void Authority_EatPotato(APotato* potato) override;
+	virtual void Authority_EatPotato(APotato* potato);
+
+	void OnSetupPlayerInput(UInputComponent* inputComponent);
+	void SetCaloriesEaten(float calories);
+
+	UPROPERTY(Transient, Replicated)
+	float _caloriesEaten;
+
+	UPROPERTY(EditAnywhere)
+	float _caloriesNeeded;
+
+	UPROPERTY(EditAnywhere)
+	float _caloryScale;
 };

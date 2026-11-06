@@ -7,8 +7,8 @@
 
 #include "PotatoPlanterCharacter.generated.h"
 
-class UPotatoPlantingBaseComponent;
-class UPotatoPickUpBaseComponent;
+class UPotatoPlantingComponent;
+class UPotatoPickUpComponent;
 
 UCLASS(Abstract)
 class POTATOGAME_API APotatoPlanterCharacter : public APotatoBaseCharacter
@@ -16,13 +16,12 @@ class POTATOGAME_API APotatoPlanterCharacter : public APotatoBaseCharacter
 	GENERATED_BODY()
 
 public:
+	APotatoPlanterCharacter();
 
 private:
-	virtual void PostInitializeComponents() override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPotatoPlantingComponent> _potatoPlantingComponent;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPlantingBaseComponent> _potatoPlantingComponentClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPickUpBaseComponent> _potatoPickupComponentClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPotatoPickUpComponent> _potatoPickupComponent;
 };

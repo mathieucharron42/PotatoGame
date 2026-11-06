@@ -6,21 +6,20 @@
 
 #include "PotatoGathererCharacter.generated.h"
 
-class UPotatoPickUpBaseComponent;
-class UObstacleCrosserBaseComponent;
+class UPotatoPickUpComponent;
+class UObstacleCrosserComponent;
 
 UCLASS(Abstract)
 class POTATOGAME_API APotatoGathererCharacter : public APotatoBaseCharacter
 {
 	GENERATED_BODY()
 public:
+	APotatoGathererCharacter();
 
 private:
-	virtual void PostInitializeComponents() override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPotatoPickUpComponent> _potatoPickupComponent;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPickUpBaseComponent> _potatoPickupComponentClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UObstacleCrosserBaseComponent> _obstacleCrosserComponentClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UObstacleCrosserComponent> _obstacleCrosserComponent;
 };

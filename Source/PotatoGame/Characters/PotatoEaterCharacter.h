@@ -6,9 +6,8 @@
 
 #include "PotatoEaterCharacter.generated.h"
 
-class UPotatoEatingBaseComponent;
-class UPotatoPickUpBaseComponent;
-class USpringArmComponent;
+class UPotatoPickUpComponent;
+class UPotatoEatingComponent;
 
 UCLASS()
 class POTATOGAME_API APotatoEaterCharacter : public APotatoBaseCharacter
@@ -16,13 +15,12 @@ class POTATOGAME_API APotatoEaterCharacter : public APotatoBaseCharacter
 	GENERATED_BODY()
 
 public:
+	APotatoEaterCharacter();
 
 private:
-	virtual void PostInitializeComponents() override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPotatoPickUpComponent> _potatoPickupComponent;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoPickUpBaseComponent> _potatoPickupComponentClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPotatoEatingBaseComponent> _potatoEatingComponentClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPotatoEatingComponent> _potatoEatingComponent;
 };
