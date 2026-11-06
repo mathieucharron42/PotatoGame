@@ -1,7 +1,10 @@
 Binaries
 DerivedDataCache
 Intermediate
-Saved
+/Saved/*
+!/Saved/UnrealBuildTool/
+/Saved/UnrealBuildTool/*
+!/Saved/UnrealBuildTool/BuildConfiguration.xml
 Builds
 Packaged
 .vscode
