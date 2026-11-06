@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.6",
+	"EngineAssociation": "5.8",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -17,6 +17,10 @@
 		}
 	],
 	"Plugins": [
+		{
+			"Name": "Fab",
+			"Enabled": false
+		},
 		{
 			"Name": "GameplayAbilities",
 			"Enabled": true
